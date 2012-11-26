@@ -13,12 +13,12 @@ var express = require('express')
   , FacebookStrategy = require('passport-facebook').Strategy
   , path = require('path');
 
+///////////////////////////////////////////////////////////////
+//////////////////// FACEBOOK STUFF ///////////////////////////
+///////////////////////////////////////////////////////////////
 
-
-
-var FACEBOOK_APP_ID = "250634021702621"
-var FACEBOOK_APP_SECRET = "5132fb812f464e4a2c300fb5c20db10d";
-
+var FACEBOOK_APP_ID = (process.env.IP ? "238432506263427" : "250634021702621");
+var FACEBOOK_APP_SECRET = (process.env.IP ? "bba9d720aab06ec8cd2671e17a235e11" : "5132fb812f464e4a2c300fb5c20db10d");
 
 // Passport session setup.
 //   To support persistent login sessions, Passport needs to be able to
@@ -34,7 +34,6 @@ passport.serializeUser(function(user, done) {
 passport.deserializeUser(function(obj, done) {
   done(null, obj);
 });
-
 
 // Use the FacebookStrategy within Passport.
 //   Strategies in Passport require a `verify` function, which accept
@@ -59,10 +58,9 @@ passport.use(new FacebookStrategy({
   }
 ));
 
-
-
-
-
+///////////////////////////////////////////////////////////////
+//////////////////// END FACEBOOK STUFF ///////////////////////
+///////////////////////////////////////////////////////////////
 
 var app = express();
 
