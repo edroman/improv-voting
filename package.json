@@ -8,6 +8,10 @@
   "dependencies": {
     "express": "3.0.0rc4",
     "jade": "*",
-    "stylus": "*"
+    "stylus": "*",
+    "async": "*",
+    "parse": "*",
+    "passport": "*",
+    "passport-facebook": "*"
   }
 }
