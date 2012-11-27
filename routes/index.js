@@ -18,6 +18,7 @@ function parse(req, res)
 	var Games = Parse.Collection.extend(
 	{
 		model: Game,
+		query: (new Parse.Query(Game).include(["creator", "invitee"]))
 	});
 
 	// Instantiate the game tree
@@ -45,15 +46,11 @@ function parse(req, res)
 									turns.each( function(turn)
 									{
 										console.log("Game ID: " + turn.get("Game").id + " Turn ID: " + turn.id + " creator = " + turn.get("Game").get("creator").get("name") + " invitee = " + turn.get("Game").get("invitee").get("name") + " User = " + turn.get("User").get("name"));
-										
-										// TODO: Async nested call to get User data
-										// var user = game.get("creator").fetch();
 
 										// If we've done an async call to retrieve the last turn of the last game,
 										// then invoke callback so we reply with HTTP response
 										if (turn == turns.last() && game == games.last())
 										{
-											console.log("callback!");
 											callback(null, recentGames);
 										}
 									});
@@ -66,8 +63,7 @@ function parse(req, res)
 			});
 		},
 
-		// 2) Find random games
-		// TODO
+		// 2) Find random games (TODO)
 		function(recentGames, callback) {
 			otherGames.fetch(
 			{
@@ -88,14 +84,10 @@ function parse(req, res)
 									{
 										console.log("Game ID: " + turn.get("Game").id + " Turn ID: " + turn.id + " creator = " + turn.get("Game").get("creator").get("name") + " invitee = " + turn.get("Game").get("invitee").get("name") + " User = " + turn.get("User").get("name"));
 										
-										// TODO: Async nested call to get User data
-										// var user = game.get("creator").fetch();
-
 										// If we've done an async call to retrieve the last turn of the last game,
 										// then invoke callback so we reply with HTTP response
 										if (turn == turns.last() && game == games.last())
 										{
-											console.log("callback!");
 											callback(null, recentGames, otherGames);
 										}
 									});
@@ -107,54 +99,8 @@ function parse(req, res)
 				error: function(collection, error) {  console.log(error); }
 			});
 		},
-/*
-		// 1) Find all games
-		function(callback) {	
-			var Obj = Parse.Object.extend("Game");
-			var GameCollection = Parse.Collection.extend({
-			  model: Obj
-			});
-			var collection = new GameCollection();
-			collection.fetch({
-				success: function(collection) {
-					collection.each(function(object) {
-						console.log(object.id);
-//						callback(null, object);
-					});
-				},
-				error: function(collection, error) {
-				}
-			});
-		},
-		// 2) For each game, find all turns, and display them
-		function(game, callback) {
-			var Obj = Parse.Object.extend("Turn");
-			var query = new Parse.Query(Obj);
-			query.find({
-			  success: function(data) {
-				for (var i = 0; i < data.length; ++i) {
-				  console.log(data[i].get('turn'));
-				}
-				callback(null, data);
-			  }
-			});
-		},
-			
-/*
-			// 2) For each game, find all turns, and display them
-			var Obj = Parse.Object.extend("Turn");
-			var query = new Parse.Query(Obj);
-//			query.equalTo("
-			query.find({
-			  success: function(data) {
-				for (var i = 0; i < data.length; ++i) {
-				  console.log(data[i].get('turn'));
-				}
-				callback(null, data);
-			  }
-			});
-		},
-*/
+		
+		// 3) Render response
 		function(recentGames, otherGames, callback) {
 			res.render('index', { recentGames: recentGames, otherGames: otherGames, currentUser: req.user });
 		}
