@@ -16,6 +16,7 @@
     "async": "*",
     "parse": "*",
     "passport": "*",
-    "passport-facebook": "*"
+    "passport-facebook": "*",
+    "underscore": "*"
   }
 }

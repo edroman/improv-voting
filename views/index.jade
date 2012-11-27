@@ -8,7 +8,7 @@ block content
 	leftCol
 		b
 			u Most Recent Stories
-		- recentGames.each( function(game) {
+		- recentGames.forEach( function(game) {
 			br
 			br
 			b By #{game.get("creator").get("name")} and #{game.get("invitee").get("name")}
