@@ -35,7 +35,7 @@ function parse(req, res)
 					games.each( function(game)
 					{
 						// Find all turns related to this game
-						game.turns = new Parse.Query("Turn").equalTo("Game", game).collection();
+						game.turns = new Parse.Query("Turn").equalTo("Game", game).include(["Game.creator", "Game.invitee", "User"]).collection();
 						game.turns.fetch(
 						{
 							success:
@@ -44,7 +44,7 @@ function parse(req, res)
 									// For each turn...
 									turns.each( function(turn)
 									{
-										console.log("Game ID: " + turn.get("Game").id + " Turn ID: " + turn.id + " creator = " + game.get("creator"));
+										console.log("Game ID: " + turn.get("Game").id + " Turn ID: " + turn.id + " creator = " + turn.get("Game").get("creator").get("name") + " invitee = " + turn.get("Game").get("invitee").get("name") + " User = " + turn.get("User").get("name"));
 										
 										// TODO: Async nested call to get User data
 										// var user = game.get("creator").fetch();
@@ -77,7 +77,7 @@ function parse(req, res)
 					games.each( function(game)
 					{
 						// Find all turns related to this game
-						game.turns = new Parse.Query("Turn").equalTo("Game", game).collection();
+						game.turns = new Parse.Query("Turn").include(["Game.creator", "Game.invitee", "User"]).equalTo("Game", game).collection();
 						game.turns.fetch(
 						{
 							success:
@@ -86,7 +86,7 @@ function parse(req, res)
 									// For each turn...
 									turns.each( function(turn)
 									{
-										console.log("Game ID: " + turn.get("Game").id + " Turn ID: " + turn.id + " creator = " + game.get("creator"));
+										console.log("Game ID: " + turn.get("Game").id + " Turn ID: " + turn.id + " creator = " + turn.get("Game").get("creator").get("name") + " invitee = " + turn.get("Game").get("invitee").get("name") + " User = " + turn.get("User").get("name"));
 										
 										// TODO: Async nested call to get User data
 										// var user = game.get("creator").fetch();

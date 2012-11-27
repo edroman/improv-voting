@@ -11,7 +11,7 @@ block content
 		- recentGames.each( function(game) {
 			br
 			br
-			b By #{game.get("creator").id} and #{game.get("invitee").id}
+			b By #{game.get("creator").get("name")} and #{game.get("invitee").get("name")}
 			br
 			- game.turns.each( function(turn) {
 			= turn.get("turn");
@@ -27,7 +27,7 @@ block content
 		- otherGames.each( function(game) {
 			br
 			br
-			b By #{game.get("creator").id} and #{game.get("invitee").id}
+			b By #{game.get("creator").get("name")} and #{game.get("invitee").get("name")}
 			br
 			- game.turns.each( function(turn) {
 			= turn.get("turn");
