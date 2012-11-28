@@ -1,0 +1,19 @@
+extends layout
+
+block content
+	br
+	b
+		u Stories I've Created
+	- games.each( function(game) {
+		br
+		br
+		b By #{game.get("creator").get("name")} and #{game.get("invitee").get("name")}
+		br
+		- game.turns.each( function(turn) {
+		= turn.get("turn");
+		- });
+		p #{game.get("votes")} votes
+		p TODO: Share this story on Facebook
+		p TODO: Share this story on Twitter
+		p
+	- });

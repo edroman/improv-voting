@@ -7,6 +7,7 @@ var express = require('express')
   , routes = require('./routes')
   , user = require('./routes/user')
   , vote = require('./routes/vote')
+  , mystories = require('./routes/mystories')
   , leaderboard = require('./routes/leaderboard')
   , http = require('http')
   , passport = require('passport')
@@ -88,6 +89,7 @@ app.configure('development', function(){
 app.get('/', routes.index);
 app.get('/users', user.list);
 app.get('/rules', function(req,res) { res.render('rules', { currentUser: req.user }); });
+app.get('/mystories', mystories.show);
 app.get('/leaderboard', leaderboard.show);
 app.get('/vote/:id', ensureAuthenticated, vote.create);
 
