@@ -6,20 +6,34 @@ html
 	body
 	center
 		h1
-			a(href='/') A Tall Tale - Stories made with Friends
-		p
-		br
+			a(href='/') A Tall Tale
+		a(href='/') Home
+		&nbsp
+		&nbsp
+		&nbsp
+		a(href='/leaderboard') Current leaderboard
+		&nbsp
+		&nbsp
+		&nbsp
+		a(href='/rules') Contest rules
+		&nbsp
+		&nbsp
+		&nbsp
 		- if (currentUser == null)
 			a(href='/auth/facebook') Sign In
 		- else
 			a(href='/logout') Logout
-		p
-			a(href='/rules') Contest rules
 		br
+		h3 Fun short stories told by two people, one sentence at a time
 		p The top voted story each week WINS a new iPhone 5 or iPad Mini (your choice)! 
+		p Last week's winner:
+		img('src=/images/ed.jpg')
+		br
+		b Ed Roman 
 		p This week's winner will be chosen in #{7 - new Date().getDay()} days.
 		br
-		a(href='https://itunes.apple.com/') Tell your own stories with friends - click here to download "A Tall Tale" iPhone app!
+		b
+			a(href='https://itunes.apple.com/') Tell your own stories with friends - click here to download "A Tall Tale" iPhone app!
 		br
 		p
 	block content
