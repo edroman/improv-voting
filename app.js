@@ -12,7 +12,11 @@ var express = require('express')
   , http = require('http')
   , passport = require('passport')
   , FacebookStrategy = require('passport-facebook').Strategy
-  , path = require('path');
+  , path = require('path')
+  , async = require('async')
+  , Parse = require('parse').Parse;
+//Parse.initialize("oqMegxam44o7Bnqw0osiRGEkheO9aMHm7mEGrKhb", "TzhNqjKrx2TOpvVqNEh3ppBJmcqMUkBq9AMvBjxi");
+Parse.initialize("WTbIj7pY3jJC3cnqxF2cidV164TOWxgTtbGfjGnF", "l4EnB0wSnIIHUIjjcTiBqsJxHT9zdDVhoTIYSowX");
 
 ///////////////////////////////////////////////////////////////
 //////////////////// FACEBOOK STUFF ///////////////////////////
@@ -41,23 +45,65 @@ passport.deserializeUser(function(obj, done) {
 //   credentials (in this case, an accessToken, refreshToken, and Facebook
 //   profile), and invoke a callback with a user object.
 var ip = process.env.IP || 'http://edro.no-ip.org:3000';
-passport.use(new FacebookStrategy({
-    clientID: FACEBOOK_APP_ID,
-    clientSecret: FACEBOOK_APP_SECRET,
-    callbackURL: ip + "/auth/facebook/callback"
-  },
-  function(accessToken, refreshToken, profile, done) {
-    // asynchronous verification, for effect...
-    process.nextTick(function () {
-      
-      // To keep the example simple, the user's Facebook profile is returned to
-      // represent the logged-in user.  In a typical application, you would want
-      // to associate the Facebook account with a user record in your database,
-      // and return that user instead.
-      return done(null, profile);
-    });
-  }
-));
+passport.use(
+	new FacebookStrategy(
+		{
+			clientID: FACEBOOK_APP_ID,
+			clientSecret: FACEBOOK_APP_SECRET,
+			callbackURL: ip + "/auth/facebook/callback"
+		},
+		function(accessToken, refreshToken, profile, done)
+		{
+			// Associate the Facebook account with a user record in the database,
+		
+			// Check if user is in database by seeing if the fbID is in there.
+			var query = new Parse.Query("User").equalTo("fbID", profile.id);
+			query.find(
+			{
+				// If Parse returns to us...
+				success: function(results) {
+					console.log("Successfully retrieved " + results.length + " users.");
+					
+					// Check how many users were found.  If 0..
+					if (results.length == 0)
+					{
+						// Make a new Parse entry
+						var user = new Parse.User();
+						user.set("email", profile.emails[0].value);
+						user.set("first_name", profile.name.givenName);
+						user.set("last_name", profile.name.familyName);
+						user.set("name", profile.displayName);
+						user.set("username", profile.username);
+						user.set("password", "");	// TODO
+						 
+						user.save(null, {
+							success: function(user) {
+								console.log("New user created successfully: " + profile._raw);
+							},
+							error: function(user, error) {
+								console.log("New user creation failed: " + error.code + " " + error.message + " raw data: " + profile._raw);
+							}
+						});					
+					}
+					else
+					{
+						// TODO
+					}
+					
+					// TODO: Does this need to change?
+					return done(null, profile);
+				},
+				error: function(error) {
+					console.log("Error: " + error.code + " " + error.message);
+					
+					// TODO: Does this need to change?
+					return done(null, profile);
+				}
+			});
+		
+		}
+	)
+);
 
 ///////////////////////////////////////////////////////////////
 //////////////////// END FACEBOOK STUFF ///////////////////////
@@ -103,11 +149,12 @@ app.get('/login', function(req, res){
 //   redirecting the user to facebook.com.  After authorization, Facebook will
 //   redirect the user back to this application at /auth/facebook/callback
 app.get('/auth/facebook',
-  passport.authenticate('facebook'),
-  function(req, res){
-    // The request will be redirected to Facebook for authentication, so this
-    // function will not be called.
-  });
+	// 2nd parameter is permissions from https://developers.facebook.com/docs/reference/login/user-friend-permissions/
+	passport.authenticate('facebook', { scope: 'email' }),
+	function(req, res){
+		// The request will be redirected to Facebook for authentication, so this
+		// function will not be called.
+	});
 
 // GET /auth/facebook/callback
 //   Use passport.authenticate() as route middleware to authenticate the
@@ -138,11 +185,7 @@ app.get('/auth/facebook/callback',
 				// Authentication failure
 				if (!user) { return res.redirect('/login'); }
 				
-				// Success:
-				
-				// Check if user is in database.  If not, make a new user
-				
-				// Establish a session
+				// Success: Establish a session
 				req.logIn(user, function(err)
 				{
 					// Exception occurred
