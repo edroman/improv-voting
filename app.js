@@ -114,11 +114,47 @@ app.get('/auth/facebook',
 //   request.  If authentication fails, the user will be redirected back to the
 //   login page.  Otherwise, the primary route function function will be called,
 //   which, in this example, will redirect the user to the home page.
-app.get('/auth/facebook/callback', 
-  passport.authenticate('facebook', { failureRedirect: '/login' }),
-  function(req, res) {
-    res.redirect('/');
-  });
+//
+//app.get('/auth/facebook/callback', 
+//  passport.authenticate('facebook', { failureRedirect: '/login' }),
+//  function(req, res) {
+//    res.redirect('/');
+//  });
+//
+//app.get('/logout', function(req, res){
+//  req.logout();
+//  res.redirect('/');
+//});
+//
+app.get('/auth/facebook/callback',
+	function(req, res, next)
+	{
+		passport.authenticate('facebook',
+			function(err, user, info)
+			{
+				// Exception occurred
+				if (err) { return next(err); }
+				
+				// Authentication failure
+				if (!user) { return res.redirect('/login'); }
+				
+				// Success:
+				
+				// Check if user is in database.  If not, make a new user
+				
+				// Establish a session
+				req.logIn(user, function(err)
+				{
+					// Exception occurred
+					if (err) { return next(err); }
+					
+					// Goto homepage
+					return res.redirect('/');
+				});
+			}
+		)(req, res, next);
+	}
+);
 
 app.get('/logout', function(req, res){
   req.logout();
