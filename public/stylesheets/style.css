@@ -13,3 +13,6 @@ rightCol {
   width: 50%;
   float: right;
 }
+fb-like {
+  overflow: hidden;
+}
