@@ -25,5 +25,5 @@ exports.show = function(req, res)
 	// Instantiate the game tree
 	var gameList = new Games();
 
-	res.render('mystories', { games: gameList, currentUser: req.user });
+	res.render('mystories', { games: gameList, currentUser: req.user, message: req.flash('message') });
 };

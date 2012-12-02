@@ -35,8 +35,9 @@ exports.create = function(req, res)
 							{
 								console.log("Found an existing vote, so user is trying to vote twice");
 								
-								// TODO: Flash message
-								res.send("Sorry, you can only vote once per story!");
+								// Flash message the error
+								req.flash('message', "Sorry, you can only vote once per story!");
+								res.redirect('/');
 //								callback(null, game);
 							}
 							else
@@ -73,7 +74,8 @@ exports.create = function(req, res)
 				{
 					var msg = "Voting failed for story " + game.id + " Error: " + error.code + " " + error.message;
 					console.log(msg);
-					response.send(msg);
+					req.flash('message', msg);
+					res.render('index', { message: req.flash('message'), currentUser: req.user });
 				}
 			});
 		},
@@ -87,13 +89,15 @@ exports.create = function(req, res)
 				{
 					var msg = "Congrats, you voted!";
 					console.log(msg);
-					res.render('vote', { result: msg, currentUser: Parse.User.current() });
+					req.flash('message', msg);
+					res.render('index', { message: req.flash('message'), currentUser: req.user });
 				},
 				error: function(vote, error)
 				{
 					var msg = "Voting failed, error: " + error.code + " " + error.message;
 					console.log(msg);
-					res.render('vote', { result: msg, currentUser: Parse.User.current() });
+					req.flash('message', msg);
+					res.render('index', { message: req.flash('message'), currentUser: req.user });
 				}
 			});
 		},

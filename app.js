@@ -14,6 +14,7 @@ var express = require('express')
   , FacebookStrategy = require('passport-facebook').Strategy
   , path = require('path')
   , async = require('async')
+  , flash = require('connect-flash')
   , Parse = require('parse').Parse;
 //Parse.initialize("oqMegxam44o7Bnqw0osiRGEkheO9aMHm7mEGrKhb", "TzhNqjKrx2TOpvVqNEh3ppBJmcqMUkBq9AMvBjxi");
 Parse.initialize("WTbIj7pY3jJC3cnqxF2cidV164TOWxgTtbGfjGnF", "l4EnB0wSnIIHUIjjcTiBqsJxHT9zdDVhoTIYSowX");
@@ -128,8 +129,9 @@ app.configure(function(){
   app.use(express.logger('dev'));
   app.use(express.bodyParser());
   app.use(express.methodOverride());
-  app.use(express.cookieParser('your secret here'));
+  app.use(express.cookieParser('improv comedy unique cookie'));
   app.use(express.session());
+  app.use(flash());
   app.use(passport.initialize());
   app.use(passport.session());
   app.use(app.router);
@@ -149,7 +151,7 @@ app.get('/leaderboard', leaderboard.show);
 app.get('/vote/:id', ensureAuthenticated, vote.create);
 
 app.get('/login', function(req, res){
-  res.render('login', { currentUser: req.user });
+  res.render('login', { currentUser: req.user, message: req.flash('message') });
 });
 
 // GET /auth/facebook
@@ -192,7 +194,11 @@ app.get('/auth/facebook/callback',
 				if (err) { return next(err); }
 				
 				// Authentication failure
-				if (!user) { return res.redirect('/login'); }
+				if (!user)
+				{
+					req.flash('message', 'Facebook authentication failure');
+					return res.redirect('/login');
+				}
 				
 				// Success: Establish a session and associate the returned "user" object (from Parse) with that session
 				req.logIn(user, function(err)
@@ -201,6 +207,7 @@ app.get('/auth/facebook/callback',
 					if (err) { return next(err); }
 					
 					// Goto homepage
+					req.flash('message', "Successfully logged in.");
 					return res.redirect('/');
 				});
 			}
@@ -210,6 +217,7 @@ app.get('/auth/facebook/callback',
 
 app.get('/logout', function(req, res){
   req.logout();
+  req.flash('message', "Successfully logged out.");
   res.redirect('/');
 });
 

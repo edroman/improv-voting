@@ -116,7 +116,7 @@ exports.show = function(req, res)
 		},
 */
 		function(data, callback) {
-			res.render('leaderboard', { games: data, currentUser: req.user });
+			res.render('leaderboard', { games: data, currentUser: req.user, message: req.flash('message') });
 		}
 	]);
 };

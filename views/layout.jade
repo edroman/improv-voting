@@ -35,9 +35,14 @@ html(xmlns="http://www.w3.org/1999/xhtml",xmlns:fb="https://www.facebook.com/200
 		br
 		b Ed Roman 
 		p This week's winner will be chosen in #{7 - new Date().getDay()} days.
-		br
-		b
-			a(href='https://itunes.apple.com/') Tell your own stories with friends - click here to download "A Tall Tale" iPhone app!
-		br
+		p
+			b
+				a(href='https://itunes.apple.com/') Tell your own stories with friends - click here to download "A Tall Tale" iPhone app!
+		- if (message != null)
+			p
+				b
+					= message
 		p
 	block content
+		br
+		p
