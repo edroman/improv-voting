@@ -24,7 +24,7 @@ html(xmlns="http://www.w3.org/1999/xhtml",xmlns:fb="https://www.facebook.com/200
 		&nbsp
 		&nbsp
 		&nbsp
-		- if (currentUser == null)
+		- if (typeof currentUser == 'undefined')
 			a(href='/auth/facebook') Sign In
 		- else
 			a(href='/logout') Logout
@@ -38,7 +38,7 @@ html(xmlns="http://www.w3.org/1999/xhtml",xmlns:fb="https://www.facebook.com/200
 		p This week's winner will be chosen in #{7 - new Date().getDay()} days.
 		p
 			a(href='https://itunes.apple.com/') Tell your own stories with friends - click here to download "A Tall Tale" iPhone app!
-		- if (message != null)
+		- if (typeof message != 'undefined')
 			p
 				b
 					= message
