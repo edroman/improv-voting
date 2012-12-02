@@ -17,7 +17,7 @@
     "parse": "*",
     "passport": "*",
     "passport-facebook": "*",
-    "underscore": "*"
+    "underscore": "*",
     "connect-flash": "*"
   }
 }
