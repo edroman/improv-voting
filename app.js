@@ -40,6 +40,10 @@ passport.deserializeUser(function(obj, done) {
   done(null, obj);
 });
 
+// Register a callback function to be invoked every time the user tries to log-in
+// via facebook.  Passport will call this callback function when Facebook returns
+// control to us
+//
 // Use the FacebookStrategy within Passport.
 //   Strategies in Passport require a `verify` function, which accept
 //   credentials (in this case, an accessToken, refreshToken, and Facebook
@@ -52,6 +56,7 @@ passport.use(
 			clientSecret: FACEBOOK_APP_SECRET,
 			callbackURL: ip + "/auth/facebook/callback"
 		},
+		// The callback function, invoked from Facebook when it returns
 		function(accessToken, refreshToken, profile, done)
 		{
 			// Associate the Facebook account with a user record in the database,
@@ -72,6 +77,7 @@ passport.use(
 						user.set("email", profile.emails[0].value);
 						user.set("first_name", profile.name.givenName);
 						user.set("last_name", profile.name.familyName);
+						user.set("fbID", profile.id);
 						user.set("name", profile.displayName);
 						user.set("username", profile.username);
 						user.set("password", "");	// TODO
@@ -79,25 +85,28 @@ passport.use(
 						user.save(null, {
 							success: function(user) {
 								console.log("New user created successfully: " + profile._raw);
+								
+								// Return the newly created user to be persisted in the session
+								return done(null, user);
 							},
 							error: function(user, error) {
 								console.log("New user creation failed: " + error.code + " " + error.message + " raw data: " + profile._raw);
+								
+								return done(null, null);
 							}
 						});					
 					}
 					else
 					{
-						// TODO
+						// Return the existing user to be persisted in the session
+						return done(null, results[0]);
 					}
-					
-					// TODO: Does this need to change?
-					return done(null, profile);
 				},
 				error: function(error) {
 					console.log("Error: " + error.code + " " + error.message);
 					
 					// TODO: Does this need to change?
-					return done(null, profile);
+					return done(null, null);
 				}
 			});
 		
