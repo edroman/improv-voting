@@ -10,21 +10,35 @@ Parse.initialize("WTbIj7pY3jJC3cnqxF2cidV164TOWxgTtbGfjGnF", "l4EnB0wSnIIHUIjjcT
 exports.create = function(req, res)
 {
 	async.waterfall([
-		// 1) Find game
+		// Find game
 		function(callback) {
-			var gameQuery = new Parse.Query("Game");
+			var gameQuery = new Parse.Query("Game").include(["creator", "invitee"]);
 			gameQuery.get(req.params.id, {
 			  success: function(game) {
 				console.log("Successfully found a game for voting: " + game);
-				callback(null, game);
+
+				// Users can't vote on their own games
+				if (req.user.fbID == game.get("creator").get("fbID") || req.user.fbID == game.get("invitee").get("fbID"))
+				{
+					var msg = "Sorry, you can't vote on your own stories!";
+					req.flash('message', msg);
+					res.redirect('/');
+				}
+				else
+				{
+					callback(null, game);
+				}
 			  },
 			  error: function(error) {
-				console.log("Error: " + error.code + " " + error.message);
+			  	var msg = "Error: " + error.code + " " + error.message;
+				console.log();
+				req.flash('message', msg);
+				res.redirect('/');
 			  }
 			});
 		},
 		
-		// 2) See if user already has a vote for this game
+		// Users can't duplicate vote on games
 		function(game, callback) {
 			var query = new Parse.Query("Vote").equalTo("Game", game).equalTo("User", Parse.User.current()).collection().fetch(
 				{
@@ -49,14 +63,16 @@ exports.create = function(req, res)
 					error:
 						function(collection, error)
 						{
-							console.log("Error when searching for votes: " + (error == null ? "" : (error.code + " " + error.message)));
-							callback(null, game);
+							var msg = "Error when searching for votes: " + (error == null ? "" : (error.code + " " + error.message));
+							console.log();
+							req.flash('message', msg);
+							res.redirect('/');
 						}
 				}
 			);
 		},
 
-		// 3) Make new vote
+		// Make new vote
 		function(game, callback) {
 			var Vote = Parse.Object.extend("Vote");
 			var vote = new Vote();
@@ -75,12 +91,12 @@ exports.create = function(req, res)
 					var msg = "Voting failed for story " + game.id + " Error: " + error.code + " " + error.message;
 					console.log(msg);
 					req.flash('message', msg);
-					res.render('index', { message: req.flash('message'), currentUser: req.user });
+					res.redirect('/');
 				}
 			});
 		},
 
-		// 4) Add to vote count in game
+		// Add to vote count in game
 		function(game, callback) {
 			game.set("votes", game.get("votes") + 1);
 			game.save(null,
@@ -90,14 +106,14 @@ exports.create = function(req, res)
 					var msg = "Congrats, you voted!";
 					console.log(msg);
 					req.flash('message', msg);
-					res.render('index', { message: req.flash('message'), currentUser: req.user });
+					res.redirect('/');
 				},
 				error: function(vote, error)
 				{
 					var msg = "Voting failed, error: " + error.code + " " + error.message;
 					console.log(msg);
 					req.flash('message', msg);
-					res.render('index', { message: req.flash('message'), currentUser: req.user });
+					res.redirect('/');
 				}
 			});
 		},
