@@ -15,7 +15,7 @@ exports.create = function(req, res)
 			var gameQuery = new Parse.Query("Game");
 			gameQuery.get(req.params.id, {
 			  success: function(game) {
-				console.log("Successfully retrieved " + game);
+				console.log("Successfully found a game for voting: " + game);
 				callback(null, game);
 			  },
 			  error: function(error) {
@@ -23,8 +23,39 @@ exports.create = function(req, res)
 			  }
 			});
 		},
+		
+		// 2) See if user already has a vote for this game
+		function(game, callback) {
+			var query = new Parse.Query("Vote").equalTo("Game", game).equalTo("User", Parse.User.current()).collection().fetch(
+				{
+					success:
+						function(results)
+						{
+							if (results.length > 0)
+							{
+								console.log("Found an existing vote, so user is trying to vote twice");
+								
+								// TODO: Flash message
+								res.send("Sorry, you can only vote once per story!");
+//								callback(null, game);
+							}
+							else
+							{
+								console.log("Searched for existing votes but found none.");
+								callback(null, game);
+							}
+						},
+					error:
+						function(collection, error)
+						{
+							console.log("Error when searching for votes: " + (error == null ? "" : (error.code + " " + error.message)));
+							callback(null, game);
+						}
+				}
+			);
+		},
 
-		// 2) Make new vote
+		// 3) Make new vote
 		function(game, callback) {
 			var Vote = Parse.Object.extend("Vote");
 			var vote = new Vote();
@@ -47,7 +78,7 @@ exports.create = function(req, res)
 			});
 		},
 
-		// 3) Add to vote count in game
+		// 4) Add to vote count in game
 		function(game, callback) {
 			game.set("votes", game.get("votes") + 1);
 			game.save(null,
@@ -56,13 +87,13 @@ exports.create = function(req, res)
 				{
 					var msg = "Congrats, you voted!";
 					console.log(msg);
-					res.render('vote', { result: msg, currentUser: req.user });
+					res.render('vote', { result: msg, currentUser: Parse.User.current() });
 				},
 				error: function(vote, error)
 				{
 					var msg = "Voting failed, error: " + error.code + " " + error.message;
 					console.log(msg);
-					res.render('vote', { result: msg, currentUser: req.user });
+					res.render('vote', { result: msg, currentUser: Parse.User.current() });
 				}
 			});
 		},

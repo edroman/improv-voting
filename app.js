@@ -194,7 +194,7 @@ app.get('/auth/facebook/callback',
 				// Authentication failure
 				if (!user) { return res.redirect('/login'); }
 				
-				// Success: Establish a session
+				// Success: Establish a session and associate the returned "user" object (from Parse) with that session
 				req.logIn(user, function(err)
 				{
 					// Exception occurred
