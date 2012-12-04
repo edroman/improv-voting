@@ -7,7 +7,8 @@ block content
 		- recentGames.forEach( function(game) {
 			br
 			br
-			b By #{game.get("creator").get("name")} and #{game.get("invitee").get("name")}
+			b
+				a(href='/stories/#{game.id}') By #{game.get("creator").get("name")} and #{game.get("invitee").get("name")}
 			br
 			- game.turns.each( function(turn) {
 			= turn.get("turn");
@@ -69,7 +70,8 @@ block content
 		- otherGames.each( function(game) {
 			br
 			br
-			b By #{game.get("creator").get("name")} and #{game.get("invitee").get("name")}
+			a(href='/stories/#{game.id}') 
+				By #{game.get("creator").get("name")} and #{game.get("invitee").get("name")}
 			br
 			- game.turns.each( function(turn) {
 			= turn.get("turn");

@@ -7,6 +7,7 @@ var express = require('express')
   , routes = require('./routes')
   , user = require('./routes/user')
   , vote = require('./routes/vote')
+  , story = require('./routes/story')
   , mystories = require('./routes/mystories')
   , leaderboard = require('./routes/leaderboard')
   , http = require('http')
@@ -149,6 +150,7 @@ app.get('/rules', function(req,res) { res.render('rules', { currentUser: req.use
 app.get('/mystories', mystories.show);
 app.get('/leaderboard', leaderboard.show);
 app.get('/vote/:id', ensureAuthenticated, vote.create);
+app.get('/stories/:id', story.show);
 
 app.get('/login', function(req, res){
   res.render('login', { currentUser: req.user, message: req.flash('message') });
