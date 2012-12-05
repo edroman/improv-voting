@@ -18,7 +18,7 @@ exports.create = function(req, res)
 				console.log("Successfully found a game for voting: " + game);
 
 				// Users can't vote on their own games
-				if (req.user.fbID == game.get("creator").get("fbID") || req.user.fbID == game.get("invitee").get("fbID"))
+				if (Parse.User.current().fbID == game.get("creator").get("fbID") || Parse.User.current().fbID == game.get("invitee").get("fbID"))
 				{
 					var msg = "Sorry, you can't vote on your own stories!";
 					req.flash('message', msg);

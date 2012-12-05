@@ -8,6 +8,7 @@ var _ = require('underscore')._;
 
 function parse(req, res)
 {
+	console.log("Current user: " + Parse.User.current() + " req.user: " + req.user);
 
 	var Turns = Parse.Collection.extend(
 	{
@@ -110,7 +111,7 @@ function parse(req, res)
 		
 		// 3) Render response
 		function(recentGames, otherGames, callback) {
-			res.render('index', { recentGames: recentGames, otherGames: otherGames, currentUser: req.user, message: req.flash('message') });
+			res.render('index', { recentGames: recentGames, otherGames: otherGames, currentUser: Parse.User.current(), message: req.flash('message') });
 		}
 	]);
 

@@ -32,15 +32,21 @@ var FACEBOOK_APP_SECRET = (process.env.IP ? "bba9d720aab06ec8cd2671e17a235e11" :
 //   serialize users into and deserialize users out of the session.  Typically,
 //   this will be as simple as storing the user ID when serializing, and finding
 //   the user by ID when deserializing.  However, since this example does not
-//   have a database of user records, the complete Facebook profile is serialized
+//   have a database of user records, the complete user profile is serialized
 //   and deserialized.
-passport.serializeUser(function(user, done) {
-  done(null, user);
-});
+passport.serializeUser(
+	function(user, done)
+	{
+		done(null, user);
+	}
+);
 
-passport.deserializeUser(function(obj, done) {
-  done(null, obj);
-});
+passport.deserializeUser(
+	function(obj, done)
+	{
+		done(null, obj);
+	}
+);
 
 // Register a callback function to be invoked every time the user tries to log-in
 // via facebook.  Passport will call this callback function when Facebook returns
@@ -82,9 +88,9 @@ passport.use(
 						user.set("fbID", profile.id);
 						user.set("name", profile.displayName);
 						user.set("username", profile.username);
-						user.set("password", "");	// TODO
+						user.set("password", "improv");		// TODO
 						 
-						user.save(null, {
+						user.signUp(null, {
 							success: function(user) {
 								console.log("New user created successfully: " + profile._raw);
 								
@@ -100,8 +106,28 @@ passport.use(
 					}
 					else
 					{
-						// Return the existing user to be persisted in the session
-						return done(null, results[0]);
+						var user = results[0];
+						
+						// Need to set password again to log-in, since we don't receive the password when we run the query.
+						user.set("password", "improv");  // TODO
+						console.log("Logging in user id: " + user.id + " user password: " + user.get("password") + " username: " + user.get("username") + " name: " + user.get("name"));
+						user.logIn(
+						{
+							success: function(user) {
+								// Login success
+								console.log("Parse login success.");
+
+								// Return the existing user to be persisted in the session
+								return done(null, user);
+							},
+							error: function(user, error) {
+								// Login failed
+								console.log("Parse login failed, reason: " + error.message);
+
+								// Return the existing user to be persisted in the session
+								return done(null, user);
+							}
+						});
 					}
 				},
 				error: function(error) {
@@ -146,14 +172,14 @@ app.configure('development', function(){
 
 app.get('/', routes.index);
 app.get('/users', user.list);
-app.get('/rules', function(req,res) { res.render('rules', { currentUser: req.user }); });
+app.get('/rules', function(req,res) { res.render('rules', { currentUser: Parse.User.current() }); });
 app.get('/mystories', mystories.show);
 app.get('/leaderboard', leaderboard.show);
 app.get('/vote/:id', ensureAuthenticated, vote.create);
 app.get('/stories/:id', story.show);
 
 app.get('/login', function(req, res){
-  res.render('login', { currentUser: req.user, message: req.flash('message') });
+  res.render('login', { currentUser: Parse.User.current(), message: req.flash('message') });
 });
 
 // GET /auth/facebook
@@ -202,7 +228,7 @@ app.get('/auth/facebook/callback',
 					return res.redirect('/login');
 				}
 				
-				// Success: Establish a session and associate the returned "user" object (from Parse) with that session
+				// Success: Establish a session and associate the returned "user" object (from Parse -- see earlier in this file) with that session
 				req.logIn(user, function(err)
 				{
 					// Exception occurred

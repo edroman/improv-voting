@@ -4,10 +4,11 @@ block content
 	br
 	b
 		u Stories I've Created
-	- games.each( function(game) {
+	- games.forEach( function(game) {
 		br
 		br
-		b By #{game.get("creator").get("name")} and #{game.get("invitee").get("name")}
+		a(href='/stories/#{game.id}') 
+			By #{game.get("creator").get("name")} and #{game.get("invitee").get("name")}
 		br
 		- game.turns.each( function(turn) {
 		= turn.get("turn");
