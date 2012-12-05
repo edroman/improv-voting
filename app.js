@@ -172,14 +172,14 @@ app.configure('development', function(){
 
 app.get('/', routes.index);
 app.get('/users', user.list);
-app.get('/rules', function(req,res) { res.render('rules', { currentUser: Parse.User.current() }); });
+app.get('/rules', function(req,res) { res.render('rules', { currentUser: req.user }); });
 app.get('/mystories', mystories.show);
 app.get('/leaderboard', leaderboard.show);
 app.get('/vote/:id', ensureAuthenticated, vote.create);
 app.get('/stories/:id', story.show);
 
 app.get('/login', function(req, res){
-  res.render('login', { currentUser: Parse.User.current(), message: req.flash('message') });
+  res.render('login', { currentUser: req.user, message: req.flash('message') });
 });
 
 // GET /auth/facebook

@@ -111,7 +111,7 @@ function parse(req, res)
 		
 		// 3) Render response
 		function(recentGames, otherGames, callback) {
-			res.render('index', { recentGames: recentGames, otherGames: otherGames, currentUser: Parse.User.current(), message: req.flash('message') });
+			res.render('index', { recentGames: recentGames, otherGames: otherGames, currentUser: req.user, message: req.flash('message') });
 		}
 	]);
 
