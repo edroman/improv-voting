@@ -4,7 +4,7 @@ block content
 	br
 	b
 		u Highest Voted Stories
-	- games.each( function(game) {
+	- games.forEach( function(game) {
 		br
 		br
 		b By #{game.get("creator").get("name")} and #{game.get("invitee").get("name")}
