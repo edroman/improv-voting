@@ -8,4 +8,11 @@ var Turn = Parse.Object.extend("Turn",
 {
 });
 
-module.exports = Turn;
+var Turns = Parse.Collection.extend(
+{
+	model: Turn
+});
+
+//module.exports = Turn;
+exports.Turn = Turn;
+exports.Turns = Turns;

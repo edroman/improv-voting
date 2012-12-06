@@ -4,16 +4,13 @@ var Parse = require('parse').Parse;
 Parse.initialize("WTbIj7pY3jJC3cnqxF2cidV164TOWxgTtbGfjGnF", "l4EnB0wSnIIHUIjjcTiBqsJxHT9zdDVhoTIYSowX");
 // var Game = require('../models/game').Game;
 var Turn = require('../models/turn').Turn;
+var Turns = require('../models/turn').Turns;
 var _ = require('underscore')._;
 
 function parse(req, res)
 {
 	console.log("Current user: " + Parse.User.current() + " req.user: " + req.user);
 
-	var Turns = Parse.Collection.extend(
-	{
-		model: Turn
-	});
 	var Game = Parse.Object.extend("Game",
 	{
 		className: "Game",
