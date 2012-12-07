@@ -43,42 +43,18 @@ html(xmlns="http://www.w3.org/1999/xhtml",xmlns:fb="https://www.facebook.com/200
 				b
 					= message
 		p
+
+		// <script language="JavaScript" type="text/javascript" src="/js/jquery-1.2.6.min.js"></script>
+		// <script language="JavaScript" type="text/javascript" src="/js/jquery-ui-personalized-1.5.2.packed.js"></script>
+		script(type='text/javascript',src='http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js')
 		#fb-root
 		script(type='text/javascript')
-			alert("1");
-			
-			// Declare a generic SDK loading function
-			var loadSDK = function(d, s, id, src)
-			{
-				var js, fjs = d.getElementsByTagName(s)[0];
-				if (!d.getElementById(id))
-				{ 
-					js = d.createElement(s);
-					js.id = id;
-					js.src = src;
-					js.async = true;
-					fjs.parentNode.insertBefore(js,fjs);
-				}
-			};
+			alert("Beginning load for social APIs");
 
-			alert("1.2");
-
-			// Facebook SDK loading
-			loadSDK(document,"script","twitter-wjs","https://platform.twitter.com/widgets.js");
-
-			alert("1.3");
-
-			loadSDK(document, 'script', 'facebook-jssdk',"//connect.facebook.net/en_US/all.js#xfbml=1&appId=250634021702621");
-
-			alert("1.4");
-
-			// script(src='http://connect.facebook.net/en_US/all.js')
-
-
-			// Facebook initialization
+			// Once the Facebook SDK is fully loaded, this callback will be invoked
 			window.fbAsyncInit = function()
 			{
-				alert("3");
+				alert("Calling FB.init()");
 				FB.init({
 					appId: "250634021702621",
 					status: true,
@@ -86,12 +62,17 @@ html(xmlns="http://www.w3.org/1999/xhtml",xmlns:fb="https://www.facebook.com/200
 					channelUrl: '//edro.no-ip.org:3000/channel.html',
 					// oauth: true
 				});
+				
+				// Associate the method below whenever we receive a Facebook status change
 				FB.Event.subscribe('auth.statusChange', handleStatusChange);
+				
+				// NOTE: Can subscribe to other notifications here too.
+				// See https://developers.facebook.com/docs/reference/javascript/FB.Event.subscribe/
 			};
 
 			// For debugging - once we are logged in and authorized
 			function handleStatusChange(response) {
-				alert("4");
+				alert("Received Status Change Response");
 				document.body.className = response.authResponse ? 'connected' : 'not_connected';
 				
 				if (response.authResponse) {
@@ -99,13 +80,35 @@ html(xmlns="http://www.w3.org/1999/xhtml",xmlns:fb="https://www.facebook.com/200
 				}
 			};
 
-			alert("5");
+			// Declare a generic SDK loading function
+			var loadSDK = function(doc, script, id, src)
+			{
+				var js, fjs = doc.getElementsByTagName(script)[0];
+				if (!doc.getElementById(id))
+				{ 
+					js = doc.createElement(script);
+					js.id = id;
+					js.src = src;
+					js.async = true;						// Makes SDK load asynchronously
+					fjs.parentNode.insertBefore(js,fjs);
+				}
+			};
+
+			// Twitter SDK loading
+			// alert("Loading Twitter SDK");
+			loadSDK(document, 'script', 'twitter-wjs', 'https://platform.twitter.com/widgets.js');
+
+			// Facebook SDK loading
+			// Note: From the moment you pass parameters like #xfbml=1&appId=X, the FB SDK will auto-init itself, but we want to control that,
+			// so we don't pass parameters
+			alert("Loading Facebook SDK");
+			loadSDK(document, 'script', 'facebook-jssdk', '//connect.facebook.net/en_US/all.js');
+
+			// Facebook callback - useful for doing stuff after Facebook returns.  Passed as parameter to API calls later.
 			var myResponse;
-				
-			// Useful for doing stuff after we get a callback
 			function callback(response)
 			{
-				alert("6");
+				alert("Received a callback");
 				if (response)
 				{
 					// For debugging - can query myResponse via JavaScript console
@@ -137,11 +140,12 @@ html(xmlns="http://www.w3.org/1999/xhtml",xmlns:fb="https://www.facebook.com/200
 			// All API calls go here
 			$(document).ready(function ()
 			{				
-				alert("7");
+				alert("Defining API calls");
+
 				// Post to your wall
 				$('#post_wall').click(function ()
 				{
-					alert("8");
+					alert("Calling post_wall");
 					FB.ui(
 						{
 							method: 'feed',
