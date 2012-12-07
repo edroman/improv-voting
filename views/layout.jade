@@ -43,6 +43,122 @@ html(xmlns="http://www.w3.org/1999/xhtml",xmlns:fb="https://www.facebook.com/200
 				b
 					= message
 		p
-	block content
-		br
-		p
+		#fb-root
+		script(type='text/javascript')
+			alert("1");
+			
+			// Declare a generic SDK loading function
+			var loadSDK = function(d, s, id, src)
+			{
+				var js, fjs = d.getElementsByTagName(s)[0];
+				if (!d.getElementById(id))
+				{ 
+					js = d.createElement(s);
+					js.id = id;
+					js.src = src;
+					js.async = true;
+					fjs.parentNode.insertBefore(js,fjs);
+				}
+			};
+
+			alert("1.2");
+
+			// Facebook SDK loading
+			loadSDK(document,"script","twitter-wjs","https://platform.twitter.com/widgets.js");
+
+			alert("1.3");
+
+			loadSDK(document, 'script', 'facebook-jssdk',"//connect.facebook.net/en_US/all.js#xfbml=1&appId=250634021702621");
+
+			alert("1.4");
+
+			// script(src='http://connect.facebook.net/en_US/all.js')
+
+
+			// Facebook initialization
+			window.fbAsyncInit = function()
+			{
+				alert("3");
+				FB.init({
+					appId: "250634021702621",
+					status: true,
+					cookie: true,
+					channelUrl: '//edro.no-ip.org:3000/channel.html',
+					// oauth: true
+				});
+				FB.Event.subscribe('auth.statusChange', handleStatusChange);
+			};
+
+			// For debugging - once we are logged in and authorized
+			function handleStatusChange(response) {
+				alert("4");
+				document.body.className = response.authResponse ? 'connected' : 'not_connected';
+				
+				if (response.authResponse) {
+					// Could theoretically use this for debugging
+				}
+			};
+
+			alert("5");
+			var myResponse;
+				
+			// Useful for doing stuff after we get a callback
+			function callback(response)
+			{
+				alert("6");
+				if (response)
+				{
+					// For debugging - can query myResponse via JavaScript console
+					myResponse = response;
+					
+					if (response.post_id)
+					{
+						alert('Post was published.');
+					}
+					else
+					{
+						// Else we are expecting a Response Body Object in JSON, so decode this
+						var responseBody = JSON.parse(response.body);
+					
+						// If the Response Body includes an Error Object, handle the Error
+						if(responseBody.error)
+						{
+							alert(responseBody.error.message);
+						}
+						// Else handle the data Object
+						else
+						{
+							alert('Post was not published.');
+						}
+					}
+				}
+			}
+	
+			// All API calls go here
+			$(document).ready(function ()
+			{				
+				alert("7");
+				// Post to your wall
+				$('#post_wall').click(function ()
+				{
+					alert("8");
+					FB.ui(
+						{
+							method: 'feed',
+							// useful if we want the callback to go to our site, rather than the JavaScript, so we can log an event
+							redirect_uri: 'http://edro.no-ip.org:3000',
+							link: 'http://edro.no-ip.org:3000/stories/{game.id}',
+							picture: 'http://fbrell.com/f8.jpg',
+							name: 'Check out this tall tale!',
+							caption: 'Made by {game.get("creator").get("name")} and {game.get("invitee").get("name")} on http://www.ATallTale.com',
+							description: '<todo: preview>'
+							// display: 'popup'
+						},
+						callback
+					);
+					return false;
+				});
+			});
+		block content
+			br
+			p
