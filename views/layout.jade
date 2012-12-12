@@ -43,6 +43,7 @@ html(xmlns="http://www.w3.org/1999/xhtml",xmlns:fb="https://www.facebook.com/200
 				b
 					= message
 		p
+		= process.env.IP || 'http://edro.no-ip.org:3000'
 
 		// <script language="JavaScript" type="text/javascript" src="/js/jquery-1.2.6.min.js"></script>
 		// <script language="JavaScript" type="text/javascript" src="/js/jquery-ui-personalized-1.5.2.packed.js"></script>
@@ -66,17 +67,20 @@ html(xmlns="http://www.w3.org/1999/xhtml",xmlns:fb="https://www.facebook.com/200
 				// Associate the method below whenever we receive a Facebook status change
 				FB.Event.subscribe('auth.statusChange', handleStatusChange);
 				
-				// NOTE: Can subscribe to other notifications here too.
+				// NOTE: Can subscribe to other notifications here too, such as when the user
+				// logs in/out, sends a message, adds a comment, or likes something.
 				// See https://developers.facebook.com/docs/reference/javascript/FB.Event.subscribe/
 			};
 
-			// For debugging - once we are logged in and authorized
+			// Callback for once we are logged in and authorized
 			function handleStatusChange(response) {
-				alert("Received Status Change Response");
+				// Mark us as connected / not_connected
 				document.body.className = response.authResponse ? 'connected' : 'not_connected';
 				
-				if (response.authResponse) {
-					// Could theoretically use this for debugging
+				// Could theoretically use this for debugging
+				if (response.authResponse)
+				{
+					alert("Received status change response: " + response.status);
 				}
 			};
 
@@ -96,7 +100,7 @@ html(xmlns="http://www.w3.org/1999/xhtml",xmlns:fb="https://www.facebook.com/200
 
 			// Twitter SDK loading
 			// alert("Loading Twitter SDK");
-			loadSDK(document, 'script', 'twitter-wjs', 'https://platform.twitter.com/widgets.js');
+			// loadSDK(document, 'script', 'twitter-wjs', 'https://platform.twitter.com/widgets.js');
 
 			// Facebook SDK loading
 			// Note: From the moment you pass parameters like #xfbml=1&appId=X, the FB SDK will auto-init itself, but we want to control that,
