@@ -43,7 +43,6 @@ html(xmlns="http://www.w3.org/1999/xhtml",xmlns:fb="https://www.facebook.com/200
 				b
 					= message
 		p
-		= process.env.IP || 'http://edro.no-ip.org:3000'
 
 		// <script language="JavaScript" type="text/javascript" src="/js/jquery-1.2.6.min.js"></script>
 		// <script language="JavaScript" type="text/javascript" src="/js/jquery-ui-personalized-1.5.2.packed.js"></script>
@@ -60,7 +59,7 @@ html(xmlns="http://www.w3.org/1999/xhtml",xmlns:fb="https://www.facebook.com/200
 					appId: "250634021702621",
 					status: true,
 					cookie: true,
-					channelUrl: '//edro.no-ip.org:3000/channel.html',
+					channelUrl: ((process.env.IP || 'http://edro.no-ip.org:3000') + '/channel.html'),
 					// oauth: true
 				});
 				
@@ -154,8 +153,8 @@ html(xmlns="http://www.w3.org/1999/xhtml",xmlns:fb="https://www.facebook.com/200
 						{
 							method: 'feed',
 							// useful if we want the callback to go to our site, rather than the JavaScript, so we can log an event
-							redirect_uri: 'http://edro.no-ip.org:3000',
-							link: 'http://edro.no-ip.org:3000/stories/{game.id}',
+							redirect_uri: (process.env.IP || 'http://edro.no-ip.org:3000'),
+							link: (process.env.IP || 'http://edro.no-ip.org:3000') + '/stories/{game.id}'),
 							picture: 'http://fbrell.com/f8.jpg',
 							name: 'Check out this tall tale!',
 							caption: 'Made by {game.get("creator").get("name")} and {game.get("invitee").get("name")} on http://www.ATallTale.com',
