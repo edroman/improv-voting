@@ -48,8 +48,16 @@ html(xmlns="http://www.w3.org/1999/xhtml",xmlns:fb="https://www.facebook.com/200
 		// <script language="JavaScript" type="text/javascript" src="/js/jquery-ui-personalized-1.5.2.packed.js"></script>
 		script(type='text/javascript',src='http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js')
 		#fb-root
+		- if (process.env.IP)
+			script(type='text/javascript')
+				var myIP = !{process.env.IP};
+		- else
+			script(type='text/javascript')
+				var myIP = 'http://edro.no-ip.org:3000';
 		script(type='text/javascript')
-			alert("Beginning load for social APIs");
+			alert("Beginning load for social APIs for IP " + myIP);
+			
+			// var myIP = !{JSON.stringify(process.env.IP)};
 
 			// Once the Facebook SDK is fully loaded, this callback will be invoked
 			window.fbAsyncInit = function()
@@ -59,7 +67,7 @@ html(xmlns="http://www.w3.org/1999/xhtml",xmlns:fb="https://www.facebook.com/200
 					appId: "250634021702621",
 					status: true,
 					cookie: true,
-					channelUrl: ((process.env.IP || 'http://edro.no-ip.org:3000') + '/channel.html'),
+					channelUrl: (myIP + '/channel.html'),
 					// oauth: true
 				});
 				
