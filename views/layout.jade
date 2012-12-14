@@ -48,12 +48,16 @@ html(xmlns="http://www.w3.org/1999/xhtml",xmlns:fb="https://www.facebook.com/200
 		// <script language="JavaScript" type="text/javascript" src="/js/jquery-ui-personalized-1.5.2.packed.js"></script>
 		script(type='text/javascript',src='http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js')
 		#fb-root
+
+		// Populate JavaScript on client-side with server-side variables so they can be used later
+		// Necessary to do it this way since process.env.IP is 'undefined' on the server then it will resolve as a blank on the client
 		- if (process.env.IP)
 			script(type='text/javascript')
-				var myIP = !{process.env.IP};
+				var myIP = '!{process.env.IP}';
 		- else
 			script(type='text/javascript')
 				var myIP = 'http://edro.no-ip.org:3000';
+
 		script(type='text/javascript')
 			alert("Beginning load for social APIs for IP " + myIP);
 			
