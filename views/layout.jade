@@ -61,8 +61,6 @@ html(xmlns="http://www.w3.org/1999/xhtml",xmlns:fb="https://www.facebook.com/200
 		script(type='text/javascript')
 			alert("Beginning load for social APIs for IP " + myIP);
 			
-			// var myIP = !{JSON.stringify(process.env.IP)};
-
 			// Once the Facebook SDK is fully loaded, this callback will be invoked
 			window.fbAsyncInit = function()
 			{
@@ -165,8 +163,8 @@ html(xmlns="http://www.w3.org/1999/xhtml",xmlns:fb="https://www.facebook.com/200
 						{
 							method: 'feed',
 							// useful if we want the callback to go to our site, rather than the JavaScript, so we can log an event
-							redirect_uri: (process.env.IP || 'http://edro.no-ip.org:3000'),
-							link: ((process.env.IP || 'http://edro.no-ip.org:3000') + '/stories/{game.id}'),
+							redirect_uri: myIP,
+							link: (myIP + '/stories/{game.id}'),
 							picture: 'http://fbrell.com/f8.jpg',
 							name: 'Check out this tall tale!',
 							caption: 'Made by {game.get("creator").get("name")} and {game.get("invitee").get("name")} on http://www.ATallTale.com',
