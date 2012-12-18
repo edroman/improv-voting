@@ -59,12 +59,20 @@ html(xmlns="http://www.w3.org/1999/xhtml",xmlns:fb="https://www.facebook.com/200
 				var myIP = 'http://edro.no-ip.org:3000';
 
 		script(type='text/javascript')
-			alert("Beginning load for social APIs for IP " + myIP);
+			
+			// Helper function that logs stuff.
+			// Can enable/disable logging by commenting out the implementation
+			function log(text)
+			{
+				// alert(text);
+			};
+			
+			log("Beginning load for social APIs for IP " + myIP);
 			
 			// Once the Facebook SDK is fully loaded, this callback will be invoked
 			window.fbAsyncInit = function()
 			{
-				alert("Calling FB.init()");
+				log("Calling FB.init()");
 				FB.init({
 					appId: "250634021702621",
 					status: true,
@@ -89,7 +97,7 @@ html(xmlns="http://www.w3.org/1999/xhtml",xmlns:fb="https://www.facebook.com/200
 				// Could theoretically use this for debugging
 				if (response.authResponse)
 				{
-					alert("Received status change response: " + response.status);
+					log("Received status change response: " + response.status);
 				}
 			};
 
@@ -108,20 +116,20 @@ html(xmlns="http://www.w3.org/1999/xhtml",xmlns:fb="https://www.facebook.com/200
 			};
 
 			// Twitter SDK loading
-			// alert("Loading Twitter SDK");
+			// log("Loading Twitter SDK");
 			// loadSDK(document, 'script', 'twitter-wjs', 'https://platform.twitter.com/widgets.js');
 
 			// Facebook SDK loading
 			// Note: From the moment you pass parameters like #xfbml=1&appId=X, the FB SDK will auto-init itself, but we want to control that,
 			// so we don't pass parameters
-			alert("Loading Facebook SDK");
+			log("Loading Facebook SDK");
 			loadSDK(document, 'script', 'facebook-jssdk', '//connect.facebook.net/en_US/all.js');
 
 			// Facebook callback - useful for doing stuff after Facebook returns.  Passed as parameter to API calls later.
 			var myResponse;
 			function callback(response)
 			{
-				alert("Received a callback");
+				log("Received a callback");
 				if (response)
 				{
 					// For debugging - can query myResponse via JavaScript console
@@ -129,7 +137,7 @@ html(xmlns="http://www.w3.org/1999/xhtml",xmlns:fb="https://www.facebook.com/200
 					
 					if (response.post_id)
 					{
-						alert('Post was published.');
+						log('Post was published.');
 					}
 					else
 					{
@@ -139,12 +147,12 @@ html(xmlns="http://www.w3.org/1999/xhtml",xmlns:fb="https://www.facebook.com/200
 						// If the Response Body includes an Error Object, handle the Error
 						if(responseBody.error)
 						{
-							alert(responseBody.error.message);
+							log(responseBody.error.message);
 						}
 						// Else handle the data Object
 						else
 						{
-							alert('Post was not published.');
+							log('Post was not published.');
 						}
 					}
 				}
@@ -153,12 +161,12 @@ html(xmlns="http://www.w3.org/1999/xhtml",xmlns:fb="https://www.facebook.com/200
 			// All API calls go here
 			$(document).ready(function ()
 			{				
-				alert("Defining API calls");
+				log("Defining API calls");
 
 				// Post to your wall
 				$('#post_wall').click(function ()
 				{
-					alert("Calling post_wall");
+					log("Calling post_wall");
 					FB.ui(
 						{
 							method: 'feed',
