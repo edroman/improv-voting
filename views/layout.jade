@@ -161,12 +161,14 @@ html(xmlns="http://www.w3.org/1999/xhtml",xmlns:fb="https://www.facebook.com/200
 			// This is called when the HTML document + associated images are all fully loaded
 			// Alternative shortcut is $(function() { ... });
 			// All API calls go here
+			// We use "." (class binding) rather than "#" (id binding) since these functions can be reused for multiple HTML elements, and each HTML
+			// element must have a unique ID
 			$(document).ready(function ()
 			{				
 				log("Defining API calls");
 
 				// Post to your wall
-				$('#post_wall').click(function ()
+				$('.post_wall').click(function ()
 				{
 					log("Calling post_wall");
 					FB.ui(
