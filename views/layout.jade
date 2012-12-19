@@ -44,9 +44,12 @@ html(xmlns="http://www.w3.org/1999/xhtml",xmlns:fb="https://www.facebook.com/200
 					= message
 		p
 
-		// <script language="JavaScript" type="text/javascript" src="/js/jquery-1.2.6.min.js"></script>
-		// <script language="JavaScript" type="text/javascript" src="/js/jquery-ui-personalized-1.5.2.packed.js"></script>
-		script(type='text/javascript',src='http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js')
+		// Include JQuery
+		// Development
+		script(type='text/javascript',src='http://code.jquery.com/jquery-1.8.3.js')		
+		// Production
+		// script(type='text/javascript',src='https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js')
+		
 		#fb-root
 
 		// Populate JavaScript on client-side with server-side variables so they can be used later
@@ -123,7 +126,10 @@ html(xmlns="http://www.w3.org/1999/xhtml",xmlns:fb="https://www.facebook.com/200
 			// Note: From the moment you pass parameters like #xfbml=1&appId=X, the FB SDK will auto-init itself, but we want to control that,
 			// so we don't pass parameters
 			log("Loading Facebook SDK");
-			loadSDK(document, 'script', 'facebook-jssdk', '//connect.facebook.net/en_US/all.js');
+			// Production
+			// loadSDK(document, 'script', 'facebook-jssdk', '//connect.facebook.net/en_US/all.js');
+			// Debug
+			loadSDK(document, 'script', 'facebook-jssdk', '//connect.facebook.net/en_US/all/debug.js');
 
 			// Facebook callback - useful for doing stuff after Facebook returns.  Passed as parameter to API calls later.
 			var myResponse;
