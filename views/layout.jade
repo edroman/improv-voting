@@ -176,7 +176,11 @@ html(xmlns="http://www.w3.org/1999/xhtml",xmlns:fb="https://www.facebook.com/200
 				// Post to your wall
 				$('.post_wall').click(function ()
 				{
-					log("Calling post_wall");
+					var nameParam = $(this).attr('name');
+					var captionParam = $(this).attr('caption');  
+
+					log("Calling post_wall with name: " + nameParam "    Caption: " + captionParam);
+
 					FB.ui(
 						{
 							method: 'feed',
@@ -184,8 +188,8 @@ html(xmlns="http://www.w3.org/1999/xhtml",xmlns:fb="https://www.facebook.com/200
 							redirect_uri: myIP,
 							link: (myIP + '/stories/{game.id}'),
 							picture: 'http://fbrell.com/f8.jpg',
-							name: 'Check out this tall tale!',
-							caption: 'Made by {game.get("creator").get("name")} and {game.get("invitee").get("name")} on http://www.ATallTale.com',
+							name: nameParam,
+							caption: captionParam,
 							description: '<todo: preview>'
 							// display: 'popup'
 						},
