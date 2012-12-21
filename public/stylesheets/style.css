@@ -16,25 +16,29 @@ rightCol {
 fb-like {
   overflow: hidden;
 }
-more {
+#more {
   background: none repeat scroll 0 0 #eee;
   border: 1px solid #cfcfcf;
   color: #000;
   display: none;
   font-weight: bold;
-  left: 1100px;
+  left: 50%;
+  margin-left: -60px;
+  bottom: 0px;
   padding: 5px;
   position: fixed;
-  top: 100px;
+  text-align: center;
 }
-no-more {
+#no-more {
   background: none repeat scroll 0 0 #eee;
   border: 1px solid #cfcfcf;
   color: #000;
   display: none;
   font-weight: bold;
-  left: 1100px;
+  left: 50%;
+  margin-left: -60px;
+  bottom: 0px;
   padding: 5px;
   position: fixed;
-  top: 100px;
+  text-align: center;
 }

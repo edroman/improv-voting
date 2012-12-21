@@ -4,10 +4,8 @@ extends layout
 
 block content
 
-	more
-		Loading More Content
-	no-more
-		No More Content
+	#more Loading Stories
+	#no-more No More Stories
 	leftCol
 		b
 			u Most Recent Stories
@@ -71,6 +69,7 @@ block content
 			$('#no-more').hide();
 		
 			// Show the "more" element if we're near the bottom
+			// scrollTop() gives us the number of pixels down from the top of the page we are scrolled
 			if ($(window).scrollTop() + $(window).height() > $(document).height() - 200)
 			{
 				$('#more').css("top","400");
