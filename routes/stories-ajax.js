@@ -1,3 +1,5 @@
+// A partial page that shows a single story.  Called from the client via AJAX when they scroll down.
+
 var async = require('async');				// Allows waterfall cascade of async ops
 var Parse = require('parse').Parse;
 //Parse.initialize("oqMegxam44o7Bnqw0osiRGEkheO9aMHm7mEGrKhb", "TzhNqjKrx2TOpvVqNEh3ppBJmcqMUkBq9AMvBjxi");
@@ -12,40 +14,21 @@ var Constants = require('../constants.js');
 
 function parse(req, res)
 {
-	console.log("Current user: " + Parse.User.current() + " req.user: " + req.user);
+	var skipElementCount = req.params.page_num * Constants.STORIES_PER_PAGE;
+	
+	console.log("Rendering partial for Current user: " + Parse.User.current() + " req.user: " + req.user + " page_num: " + req.params.page_num + " skipElementCount: " + skipElementCount);
 	
 	// Instantiate the game tree
 	var otherGames = new Games();
 
-	var totalGameCount;
-
-	var query = new Parse.Query(Game).include(["creator", "invitee"]);
-
 	async.waterfall([
-		// 1) Count all games.  TODO: Move to parallel
+		// 1) Find recent games
 		function(callback) {
-			query.count(
-			{
-				success: function(count)
-				{
-					console.log("There are " + count + " total games found.");
-					
-					totalGameCount = count;
-
-					callback(null);
-				},
-				error: function(error) {  console.log(error); }
-			});
-		},
-
-		// 2) Find recent games
-		function(callback) {
-			query.limit(Constants.STORIES_PER_PAGE).find(
+		
+			new Parse.Query(Game).include(["creator", "invitee"]).skip(skipElements).limit(Constants.STORIES_PER_PAGE).find(
 			{
 				success: function(games)
 				{
-					console.log("Loading " + games.length + " games.");
-
 					// For each game...
 					var callNext = _.after(games.length, function() { callback(null, games) } );
 					_.each(games, function(game)
@@ -58,7 +41,7 @@ function parse(req, res)
 			});
 		},
 
-		// 3) Find random games (TODO - calculate some random numbers and ask for rows whose index -- a new column -- match those numbers)
+		// 2) Find random games (TODO - calculate some random numbers and ask for rows whose index -- a new column -- match those numbers)
 		function(recentGames, callback) {
 			otherGames.fetch(
 			{
@@ -95,9 +78,9 @@ function parse(req, res)
 			});
 		},
 		
-		// 4) Render response
+		// 3) Render response
 		function(recentGames, otherGames, callback) {
-			res.render('index', { recentGames: recentGames, otherGames: otherGames, currentUser: req.user, STORIES_PER_PAGE: Constants.STORIES_PER_PAGE, totalGameCount: totalGameCount, message: req.flash('message') });
+			res.render('index', { recentGames: recentGames, otherGames: otherGames, currentUser: req.user, message: req.flash('message') });
 		}
 	]);
 

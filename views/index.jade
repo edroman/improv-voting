@@ -1,3 +1,5 @@
+// The main homepage
+
 extends layout
 
 block content
@@ -61,7 +63,6 @@ block content
 	// Infinite Scroll code
 	script(type="text/javascript")
 		var page = 1;
-		var entriesPerPage = 3;
 		
 		$(window).scroll(function ()
 		{
@@ -86,11 +87,8 @@ block content
 				// Increment the page we're on
 				page++;
 				
-				// TODO: Figure out how much content exists in total (on server)
-				var totalEntries = 300;
-				
 				// If we're on the final page, then display "no more"
-				if ((page-1)* entriesPerPage > totalEntries)
+				if ((page-1) * !{STORIES_PER_PAGE} > !{totalGameCount})
 				{
 					$('#no-more').css("top","400");
 					$('#no-more').show();
@@ -99,9 +97,9 @@ block content
 				else
 				{
 					$.ajax({
-						type: "POST",
+						type: "GET",
 						url: "stories-ajax",
-						data: { page_num: page },
+						parameters: { page_num : page },
 						success: function(res)
 								{
 									$("leftCol").append(res);

@@ -16,10 +16,11 @@ exports.show = function(req, res)
 		return;
 	}
 
+	console.log("mystories.js Current user: " + Parse.User.current().id + " req.user: " + req.user.id);
+
 	async.waterfall([
 		// 1) Find games I created
 		function(callback) {
-			console.log("Current user: " + Parse.User.current().id + " req.user: " + req.user.id);
 			new Parse.Query(Game).include(["creator", "invitee"]).equalTo("creator", Parse.User.current()).find(
 			{
 				success: function(games)
