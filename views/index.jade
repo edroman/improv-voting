@@ -62,7 +62,7 @@ block content
 
 	// Infinite Scroll code
 	script(type="text/javascript")
-		var page = 1;
+		var page = 0;
 		
 		$(window).scroll(function ()
 		{
@@ -88,7 +88,7 @@ block content
 				page++;
 				
 				// If we're on the final page, then display "no more"
-				if ((page-1) * !{STORIES_PER_PAGE} > !{totalGameCount})
+				if (page * !{STORIES_PER_PAGE} > !{totalGameCount})
 				{
 					$('#no-more').css("top","400");
 					$('#no-more').show();
@@ -99,12 +99,10 @@ block content
 					$.ajax({
 						type: "GET",
 						url: "stories-ajax",
-						parameters: { page_num : page },
-						success: function(res)
-								{
-									$("leftCol").append(res);
-									console.log(res);
-								}
+						data: { page_num : page }
+					}).done( function(msg) {
+						$("leftCol").append(msg);
+						console.log(msg);
 					});
 				}
 			}	

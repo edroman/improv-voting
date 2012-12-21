@@ -176,7 +176,7 @@ app.get('/', routes.index);
 app.get('/users', user.list);
 app.get('/rules', function(req,res) { res.render('rules', { currentUser: req.user }); });
 app.get('/mystories', mystories.show);
-app.post('/stories-ajax', storiesajax.show);
+app.get('/stories-ajax', storiesajax.show);
 app.get('/leaderboard', leaderboard.show);
 app.get('/vote/:id', ensureAuthenticated, vote.create);
 app.get('/stories/:id', story.show);

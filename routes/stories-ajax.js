@@ -12,11 +12,11 @@ var Games = require('../models/game').Games;
 var _ = require('underscore')._;
 var Constants = require('../constants.js');
 
-function parse(req, res)
+exports.show = function (req, res)
 {
-	var skipElementCount = req.params.page_num * Constants.STORIES_PER_PAGE;
+	var skipElementCount = req.query.page_num * Constants.STORIES_PER_PAGE;
 	
-	console.log("Rendering partial for Current user: " + Parse.User.current() + " req.user: " + req.user + " page_num: " + req.params.page_num + " skipElementCount: " + skipElementCount);
+	console.log("Rendering partial for Current user: " + Parse.User.current() + " req.user: " + req.user + " page_num: " + req.query.page_num + " skipElementCount: " + skipElementCount);
 	
 	// Instantiate the game tree
 	var otherGames = new Games();
@@ -25,7 +25,7 @@ function parse(req, res)
 		// 1) Find recent games
 		function(callback) {
 		
-			new Parse.Query(Game).include(["creator", "invitee"]).skip(skipElements).limit(Constants.STORIES_PER_PAGE).find(
+			new Parse.Query(Game).include(["creator", "invitee"]).skip(skipElementCount).limit(Constants.STORIES_PER_PAGE).find(
 			{
 				success: function(games)
 				{
@@ -80,16 +80,8 @@ function parse(req, res)
 		
 		// 3) Render response
 		function(recentGames, otherGames, callback) {
-			res.render('index', { recentGames: recentGames, otherGames: otherGames, currentUser: req.user, message: req.flash('message') });
+			res.render('story-partial', { recentGames: recentGames, otherGames: otherGames, currentUser: req.user, message: req.flash('message') });
 		}
 	]);
 
-}
-
-/*
- * GET home page.
- */
-
-exports.index = function(req, res){
-	parse(req,res);
 };
