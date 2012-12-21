@@ -2,19 +2,16 @@ extends layout
 
 block content
 
+	more
+		Loading More Content
+	no-more
+		No More Content
 	leftCol
 		b
 			u Most Recent Stories
 
-		// Initialize Infinity Scrolling
-		script(type='text/javascript',src='/javascripts/infinity.js')
-		script(type='text/javascript')
-			var $el = $('#my-infinite-container');
-			var listView = new infinity.ListView($el);
- 
-		- var i = 0;
+		// Populate content with initial dataset loaded from controller.
 		- recentGames.forEach( function(game) {
-			- i = i +1;
 			br
 			br
 			b
@@ -38,11 +35,6 @@ block content
 				// Facebook share code
 				a(href='#',class='post_wall',name='Check out this tall tale!',caption='Made by #{game.get("creator").get("name")} and #{game.get("invitee").get("name")} on http://www.ATallTale.com') Share on Facebook
 			p
-
-			// ... When adding new content: 
-			script(type='text/javascript')
-				var $newContent = $('<p>Hello World</p>');
-				listView.append($newContent);
 		- });
 	rightCol
 		b
@@ -64,3 +56,58 @@ block content
 				.fb-like(data-href="http://edro.no-ip.org:3000/stories/b#{game.id}",layout="box_count", data-send="false", data-width="450", data-show-faces="false")
 					a(href='#',onclick='postToFeed(); return false;') Share on Facebook
 		- });
+
+
+	// Infinite Scroll code
+	script(type="text/javascript")
+		var page = 1;
+		var entriesPerPage = 3;
+		
+		$(window).scroll(function ()
+		{
+			// Initially, hide the "more" and "no more" elements which the user sees if they're at the bottom
+			$('#more').hide();
+			$('#no-more').hide();
+		
+			// Show the "more" element if we're near the bottom
+			if ($(window).scrollTop() + $(window).height() > $(document).height() - 200)
+			{
+				$('#more').css("top","400");
+				$('#more').show();
+			}
+
+			// If we're at the bottom...
+			if ($(window).scrollTop() + $(window).height() == $(document).height())
+			{
+				// Hide "more" and "no more"
+				$('#more').hide();
+				$('#no-more').hide();
+				
+				// Increment the page we're on
+				page++;
+				
+				// TODO: Figure out how much content exists in total (on server)
+				var totalEntries = 300;
+				
+				// If we're on the final page, then display "no more"
+				if ((page-1)* entriesPerPage > totalEntries)
+				{
+					$('#no-more').css("top","400");
+					$('#no-more').show();
+				}
+				// Otherwise, do an AJAX call to retrieve more content
+				else
+				{
+					$.ajax({
+						type: "POST",
+						url: "stories-ajax",
+						data: { page_num: page },
+						success: function(res)
+								{
+									$("leftCol").append(res);
+									console.log(res);
+								}
+					});
+				}
+			}	
+		});
