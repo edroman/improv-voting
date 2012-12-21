@@ -5,6 +5,13 @@ block content
 	leftCol
 		b
 			u Most Recent Stories
+
+		// Initialize Infinity Scrolling
+		script(type='text/javascript',src='/javascripts/infinity.js')
+		script(type='text/javascript')
+			var $el = $('#my-infinite-container');
+			var listView = new infinity.ListView($el);
+ 
 		- var i = 0;
 		- recentGames.forEach( function(game) {
 			- i = i +1;
@@ -31,6 +38,11 @@ block content
 				// Facebook share code
 				a(href='#',class='post_wall',name='Check out this tall tale!',caption='Made by #{game.get("creator").get("name")} and #{game.get("invitee").get("name")} on http://www.ATallTale.com') Share on Facebook
 			p
+
+			// ... When adding new content: 
+			script(type='text/javascript')
+				var $newContent = $('<p>Hello World</p>');
+				listView.append($newContent);
 		- });
 	rightCol
 		b
