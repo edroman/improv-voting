@@ -16,7 +16,7 @@ rightCol {
 fb-like {
   overflow: hidden;
 }
-#more {
+#loading {
   background: none repeat scroll 0 0 #eee;
   border: 1px solid #cfcfcf;
   color: #000;

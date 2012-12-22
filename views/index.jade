@@ -4,7 +4,7 @@ extends layout
 
 block content
 
-	#more Loading Stories
+	#loading Loading Stories...
 	#no-more No More Stories
 	leftCol
 		b
@@ -60,49 +60,67 @@ block content
 
 	// Infinite Scroll code
 	script(type="text/javascript")
-		var page = 0;
+		var pagesRequested = 0;
+		var pagesRetrieved = 0;
 		
 		$(window).scroll(function ()
 		{
-			// Initially, hide the "more" and "no more" elements which the user sees if they're at the bottom
-			$('#more').hide();
+			var moreStoriesToRequest = ( (pagesRequested+1) * !{STORIES_PER_PAGE} <= !{totalGameCount});
+			var moreStoriesToRetrieve = ( (pagesRetrieved+1) * !{STORIES_PER_PAGE} <= !{totalGameCount});
+
+			// scrollTop() gives us the number of pixels down from the top of the page we are scrolled
+			var nearBottom = ($(window).scrollTop() + $(window).height() > $(document).height() - 200);
+
+			// By default, hide the "loading" and "no more" elements which the user sees if they're at the bottom
+			$('#loading').hide();
 			$('#no-more').hide();
 		
-			// Show the "more" element if we're near the bottom
-			// scrollTop() gives us the number of pixels down from the top of the page we are scrolled
-			if ($(window).scrollTop() + $(window).height() > $(document).height() - 200)
+			// If we're near the bottom of the screen..
+			if (nearBottom)
 			{
-				$('#more').css("top","400");
-				$('#more').show();
-			}
+				// If there's more content to load...
+				if (moreStoriesToRequest)
+				{
+					// Show the "loading" element
+					$('#loading').css("top","400");
+					$('#loading').show();
+	
+					// Increment the page we're on
+					pagesRequested++;
+					
+					// Do an AJAX call to retrieve more content
+					$.ajax({
+						type: "GET",
+						url: "stories-ajax",
+						data: { page_num : pagesRequested }
+					}).done( function(msg) {
+						$("leftCol").append(msg);
+						console.log(msg);
+						pagesRetrieved++;
 
-			// If we're at the bottom...
-			if ($(window).scrollTop() + $(window).height() == $(document).height())
-			{
-				// Hide "more" and "no more"
-				$('#more').hide();
-				$('#no-more').hide();
-				
-				// Increment the page we're on
-				page++;
-				
-				// If we're on the final page, then display "no more"
-				if (page * !{STORIES_PER_PAGE} > !{totalGameCount})
+					// Re-hide the "loading" and "no more" elements which the user sees if they're at the bottom
+					$('#loading').hide();
+					$('#no-more').hide();
+					});
+				}
+				else if (moreStoriesToRetrieve)
+				{
+					// Show the "loading" element
+					$('#loading').css("top","400");
+					$('#loading').show();
+				}
+				// Otherwise we're on the final page, so display "no more stories"
+				else
 				{
 					$('#no-more').css("top","400");
 					$('#no-more').show();
 				}
-				// Otherwise, do an AJAX call to retrieve more content
-				else
-				{
-					$.ajax({
-						type: "GET",
-						url: "stories-ajax",
-						data: { page_num : page }
-					}).done( function(msg) {
-						$("leftCol").append(msg);
-						console.log(msg);
-					});
-				}
-			}	
+			}
+			// If we're at the bottom...
+			// if ($(window).scrollTop() + $(window).height() == $(document).height())
+			// {
+			//		Hide "more" and "no more"
+			//		$('#more').hide();
+			// 		$('#no-more').hide();
+			// }
 		});
