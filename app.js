@@ -11,6 +11,7 @@ var express = require('express')
   , storiesajax = require('./routes/stories-ajax')
   , mystories = require('./routes/mystories')
   , leaderboard = require('./routes/leaderboard')
+  , seeds = require('./routes/seeds')
   , http = require('http')
   , passport = require('passport')
   , FacebookStrategy = require('passport-facebook').Strategy
@@ -177,6 +178,7 @@ app.get('/users', user.list);
 app.get('/rules', function(req,res) { res.render('rules', { currentUser: req.user }); });
 app.get('/mystories', mystories.show);
 app.get('/stories-ajax', storiesajax.show);
+app.get('/seeds', seeds.populate);
 app.get('/leaderboard', leaderboard.show);
 app.get('/vote/:id', ensureAuthenticated, vote.create);
 app.get('/stories/:id', story.show);
