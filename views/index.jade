@@ -39,11 +39,13 @@ block content
 	rightCol
 		b
 			u Other Interesting Stories
-		- otherGames.each( function(game) {
+
+		// Populate content with initial dataset loaded from controller.
+		- otherGames.forEach( function(game) {
 			br
 			br
-			a(href='/stories/#{game.id}') 
-				By #{game.get("creator").get("name")} and #{game.get("invitee").get("name")}
+			b
+				a(href='/stories/#{game.id}') By #{game.get("creator").get("name")} and #{game.get("invitee").get("name")}
 			br
 			- game.turns.each( function(turn) {
 			= turn.get("turn");
@@ -52,11 +54,18 @@ block content
 			p
 			a(href='/vote/#{game.id}') Vote on this story!
 			p
+				// Tweet code
 				// a(href='https://twitter.com/share',class='twitter-share-button',data-lang="en",data-count="none",data-related="xbox:Ghostfire Games",data-text="Check out this fun story! #atalltale",data-url="http://edro.no-ip.org:3000/stories/#{game.id}") Tweet
-				.fb-like(data-href="http://edro.no-ip.org:3000/stories/b#{game.id}",layout="box_count", data-send="false", data-width="450", data-show-faces="false")
-					a(href='#',onclick='postToFeed(); return false;') Share on Facebook
-		- });
+				
+				// Facebook Like button
+				.fb-like(data-href="http://edro.no-ip.org:3000/stories/b#{game.id}",layout="box_count", data-send="false", data-width="450", data-show-faces="false")				
 
+				p
+
+				// Facebook share code
+				a(href='#',class='post_wall',name='Check out this tall tale!',caption='Made by #{game.get("creator").get("name")} and #{game.get("invitee").get("name")} on http://www.ATallTale.com') Share on Facebook
+			p
+		- });
 
 	// Infinite Scroll code
 	script(type="text/javascript")
@@ -84,24 +93,28 @@ block content
 					// Show the "loading" element
 					$('#loading').css("top","400");
 					$('#loading').show();
-	
-					// Increment the page we're on
-					pagesRequested++;
-					
-					// Do an AJAX call to retrieve more content
-					$.ajax({
-						type: "GET",
-						url: "stories-ajax",
-						data: { page_num : pagesRequested }
-					}).done( function(msg) {
-						$("leftCol").append(msg);
-						console.log(msg);
-						pagesRetrieved++;
 
-					// Re-hide the "loading" and "no more" elements which the user sees if they're at the bottom
-					$('#loading').hide();
-					$('#no-more').hide();
-					});
+					// Perform an AJAX call to load more -- only if we're not waiting for more data from the server from a previous call
+					if (pagesRequested == pagesRetrieved)
+					{
+						// Increment the page we're on
+						pagesRequested++;
+						
+						// Do an AJAX call to retrieve more content
+						$.ajax({
+							type: "GET",
+							url: "stories-ajax",
+							data: { page_num : pagesRequested }
+						}).done( function(msg) {
+							$("leftCol").append(msg);
+							console.log(msg);
+							pagesRetrieved++;
+	
+							// Re-hide the "loading" and "no more" elements which the user sees if they're at the bottom
+							$('#loading').hide();
+							$('#no-more').hide();
+						});
+					}
 				}
 				else if (moreStoriesToRetrieve)
 				{

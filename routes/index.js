@@ -13,9 +13,6 @@ var Constants = require('../constants.js');
 function parse(req, res)
 {
 	console.log("Current user: " + Parse.User.current() + " req.user: " + req.user);
-	
-	// Instantiate the game tree
-	var otherGames = new Games();
 
 	// Count total # of games - used for pagination for infinite scroll to see how much content is left to load
 	var totalGameCount;
@@ -47,12 +44,17 @@ function parse(req, res)
 				{
 					console.log("Loading " + games.length + " games.");
 
-					// For each game...
+					// Setup a callback
 					var callNext = _.after(games.length, function() { callback(null, games) } );
+
+					// For each game...
 					_.each(games, function(game)
 					{
 						// Deep load it
-						game.load( { success: callNext } );
+						game.load({
+							// On the final async load, invoke the callback
+							success: callNext
+						});
 					});
 				},
 				error: function(error) {  console.log(error); }
@@ -61,38 +63,26 @@ function parse(req, res)
 
 		// 3) Find random games (TODO - calculate some random numbers and ask for rows whose index -- a new column -- match those numbers)
 		function(recentGames, callback) {
-			otherGames.fetch(
+			query.limit(Constants.STORIES_PER_PAGE).find(
 			{
 				success: function(games)
 				{
+					console.log("Loading " + games.length + " games.");
+
+					// Setup a callback
+					var callNext = _.after(games.length, function() { callback(null, recentGames, games) } );
+
 					// For each game...
-					games.each( function(game)
+					_.each(games, function(game)
 					{
-						// Find all turns related to this game
-						game.turns = new Parse.Query("Turn").include(["Game.creator", "Game.invitee", "User"]).equalTo("Game", game).collection();
-						game.turns.fetch(
-						{
-							success:
-								function(turns)
-								{
-									// For each turn...
-									turns.each( function(turn)
-									{
-										console.log("Game ID: " + turn.get("Game").id + " Turn ID: " + turn.id + " creator = " + turn.get("Game").get("creator").get("name") + " invitee = " + turn.get("Game").get("invitee").get("name") + " User = " + turn.get("User").get("name"));
-										
-										// If we've done an async call to retrieve the last turn of the last game,
-										// then invoke callback so we reply with HTTP response
-										if (turn == turns.last() && game == games.last())
-										{
-											callback(null, recentGames, otherGames);
-										}
-									});
-								},
-							error: function(collection, error) { console.log(error); }
+						// Deep load it
+						game.load({
+							// On the final async load, invoke the callback
+							success: callNext
 						});
 					});
 				},
-				error: function(collection, error) {  console.log(error); }
+				error: function(error) {  console.log(error); }
 			});
 		},
 		

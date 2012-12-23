@@ -18,9 +18,6 @@ exports.show = function (req, res)
 	
 	console.log("Rendering partial for Current user: " + Parse.User.current() + " req.user: " + req.user + " page_num: " + req.query.page_num + " skipElementCount: " + skipElementCount);
 	
-	// Instantiate the game tree
-	var otherGames = new Games();
-
 	async.waterfall([
 		// 1) Find recent games
 		function(callback) {
@@ -43,38 +40,19 @@ exports.show = function (req, res)
 
 		// 2) Find random games (TODO - calculate some random numbers and ask for rows whose index -- a new column -- match those numbers)
 		function(recentGames, callback) {
-			otherGames.fetch(
+			new Parse.Query(Game).include(["creator", "invitee"]).skip(skipElementCount).limit(Constants.STORIES_PER_PAGE).find(
 			{
 				success: function(games)
 				{
 					// For each game...
-					games.each( function(game)
+					var callNext = _.after(games.length, function() { callback(null, recentGames, games) } );
+					_.each(games, function(game)
 					{
-						// Find all turns related to this game
-						game.turns = new Parse.Query("Turn").include(["Game.creator", "Game.invitee", "User"]).equalTo("Game", game).collection();
-						game.turns.fetch(
-						{
-							success:
-								function(turns)
-								{
-									// For each turn...
-									turns.each( function(turn)
-									{
-										console.log("Game ID: " + turn.get("Game").id + " Turn ID: " + turn.id + " creator = " + turn.get("Game").get("creator").get("name") + " invitee = " + turn.get("Game").get("invitee").get("name") + " User = " + turn.get("User").get("name"));
-										
-										// If we've done an async call to retrieve the last turn of the last game,
-										// then invoke callback so we reply with HTTP response
-										if (turn == turns.last() && game == games.last())
-										{
-											callback(null, recentGames, otherGames);
-										}
-									});
-								},
-							error: function(collection, error) { console.log(error); }
-						});
+						// Deep load it
+						game.load( { success: callNext } );
 					});
 				},
-				error: function(collection, error) {  console.log(error); }
+				error: function(error) {  console.log(error); }
 			});
 		},
 		
