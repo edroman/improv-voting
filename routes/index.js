@@ -17,6 +17,7 @@ function parse(req, res)
 	// Instantiate the game tree
 	var otherGames = new Games();
 
+	// Count total # of games - used for pagination for infinite scroll to see how much content is left to load
 	var totalGameCount;
 
 	var query = new Parse.Query(Game).include(["creator", "invitee"]);

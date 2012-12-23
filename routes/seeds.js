@@ -31,7 +31,7 @@ exports.populate = function(req, res)
 			});
 		},
 		function(callback) {
-			// Make games + turns
+			// Make games
 			for (var i=0; i < 10; ++i)
 			{
 				var game = new Game();
@@ -49,29 +49,29 @@ exports.populate = function(req, res)
 							{
 								Logger.log("Successfully made game:", game);
 		
-								// The object was saved successfully.
+								// Make some turns for this game
 								for (var j=0; j < 3; ++j)
 								{
 									var turn = new Turn();
 									turn.set("Game", game);
 									turn.set("User", (j % 2 == 0 ? player1 : player2));
 									turn.set("turn", "Test Data  ");
-								}
-								turn.set("turnNumber", i+1);
-								
-								turn.save(
-									null,
-									{
-										success: function(turn)
+									turn.set("turnNumber", j+1);
+							
+									turn.save(
+										null,
 										{
-											Logger.log("Successfully made turn ", turn);
-										},
-										error: function(turn, error)
-										{
-											Logger.log("Error when saving turn: ", error.code, " ", error.message);
+											success: function(turn)
+											{
+												Logger.log("Successfully made turn ", turn);
+											},
+											error: function(turn, error)
+											{
+												Logger.log("Error when saving turn: ", error.code, " ", error.message);
+											}
 										}
-									}
-								);
+									);
+								}
 							},
 						error:
 							function(game, error)
