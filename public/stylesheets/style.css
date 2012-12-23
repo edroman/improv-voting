@@ -42,3 +42,15 @@ fb-like {
   position: fixed;
   text-align: center;
 }
+#debug {
+  background: none repeat scroll 0 0 #eee;
+  border: 1px solid #cfcfcf;
+  color: #000;
+  font-weight: bold;
+  left: 50%;
+  margin-left: -60px;
+  bottom: 50px;
+  padding: 5px;
+  position: fixed;
+  text-align: center;
+}

@@ -1,26 +1,28 @@
 // Display X new games loaded from controller.
 - recentGames.forEach( function(game) {
-	br
-	br
-	b
-		a(href='/stories/#{game.id}') By #{game.get("creator").get("name")} and #{game.get("invitee").get("name")}
-	br
-	- game.turns.each( function(turn) {
-	= turn.get("turn");
-	- });
-	p #{game.get("votes")} votes
-	p
-	a(href='/vote/#{game.id}') Vote on this story!
-	p
-		// Tweet code
-		// a(href='https://twitter.com/share',class='twitter-share-button',data-lang="en",data-count="none",data-related="xbox:Ghostfire Games",data-text="Check out this fun story! #atalltale",data-url="http://edro.no-ip.org:3000/stories/#{game.id}") Tweet
-		
-		// Facebook Like button
-		.fb-like(data-href="http://edro.no-ip.org:3000/stories/b#{game.id}",layout="box_count", data-send="false", data-width="450", data-show-faces="false")				
-
+	// Make a new div element container - necessary since later we retrieve more data from server if there aren't enough div's off-screen
+	.recentStory
+		br
+		br
+		b
+			a(href='/stories/#{game.id}') By #{game.get("creator").get("name")} and #{game.get("invitee").get("name")}
+		br
+		- game.turns.each( function(turn) {
+		= turn.get("turn");
+		- });
+		p #{game.get("votes")} votes
 		p
-
-		// Facebook share code
-		a(href='#',class='post_wall',name='Check out this tall tale!',caption='Made by #{game.get("creator").get("name")} and #{game.get("invitee").get("name")} on http://www.ATallTale.com') Share on Facebook
-	p
+		a(href='/vote/#{game.id}') Vote on this story!
+		p
+			// Tweet code
+			// a(href='https://twitter.com/share',class='twitter-share-button',data-lang="en",data-count="none",data-related="xbox:Ghostfire Games",data-text="Check out this fun story! #atalltale",data-url="http://edro.no-ip.org:3000/stories/#{game.id}") Tweet
+			
+			// Facebook Like button
+			.fb-like(data-href="http://edro.no-ip.org:3000/stories/b#{game.id}",layout="box_count", data-send="false", data-width="450", data-show-faces="false")				
+	
+			p
+	
+			// Facebook share code
+			a(href='#',class='post_wall',name='Check out this tall tale!',caption='Made by #{game.get("creator").get("name")} and #{game.get("invitee").get("name")} on http://www.ATallTale.com') Share on Facebook
+		p
 - });

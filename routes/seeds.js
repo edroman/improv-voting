@@ -32,7 +32,7 @@ exports.populate = function(req, res)
 		},
 		function(callback) {
 			// Make games
-			for (var i=0; i < 10; ++i)
+			for (var i=0; i < 100; ++i)
 			{
 				var game = new Game();
 				 

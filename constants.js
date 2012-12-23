@@ -1,1 +1,1 @@
-exports.STORIES_PER_PAGE = 2;
+exports.STORIES_PER_PAGE = 8;
