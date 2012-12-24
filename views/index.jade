@@ -100,10 +100,10 @@ block content
 				return ((elemBottom <= docViewBottom) && (elemTop >= docViewTop));
 		}
 
-		// Whenever the user scrolls, this code will run
 		var pagesRequested = 0;
 		var pagesRetrieved = 0;		
-		$(window).scroll(function ()
+
+		function processInfiniteScroll()
 		{
 			///////////////////////////////////////////////////////
 			// Load more stories if needed
@@ -176,4 +176,8 @@ block content
 					$('#no-more').show();
 				}
 			}
-		});
+		}
+		
+		// Whenever the user scrolls or the document is ready, process infinite scroll
+		$(window).scroll(function () { processInfiniteScroll(); });
+		$(document).ready( function() { processInfiniteScroll(); });
