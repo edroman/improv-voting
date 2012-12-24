@@ -14,7 +14,7 @@ var Constants = require('../constants.js');
 
 exports.show = function (req, res)
 {
-	var skipElementCount = req.query.page_num * Constants.STORIES_PER_PAGE;
+	var skipElementCount = req.query.page_num * Constants.ELEMENTS_PER_LOAD;
 	
 	console.log("Rendering partial for Current user: " + Parse.User.current() + " req.user: " + req.user + " page_num: " + req.query.page_num + " skipElementCount: " + skipElementCount);
 	
@@ -22,7 +22,7 @@ exports.show = function (req, res)
 		// 1) Find recent games
 		function(callback) {
 		
-			new Parse.Query(Game).include(["creator", "invitee"]).skip(skipElementCount).limit(Constants.STORIES_PER_PAGE).find(
+			new Parse.Query(Game).include(["creator", "invitee"]).skip(skipElementCount).limit(Constants.ELEMENTS_PER_LOAD).find(
 			{
 				success: function(games)
 				{
@@ -40,7 +40,7 @@ exports.show = function (req, res)
 
 		// 2) Find random games (TODO - calculate some random numbers and ask for rows whose index -- a new column -- match those numbers)
 		function(recentGames, callback) {
-			new Parse.Query(Game).include(["creator", "invitee"]).skip(skipElementCount).limit(Constants.STORIES_PER_PAGE).find(
+			new Parse.Query(Game).include(["creator", "invitee"]).skip(skipElementCount).limit(Constants.ELEMENTS_PER_LOAD).find(
 			{
 				success: function(games)
 				{

@@ -38,7 +38,7 @@ function parse(req, res)
 
 		// 2) Find recent games
 		function(callback) {
-			query.limit(Constants.STORIES_PER_PAGE).find(
+			query.limit(Constants.ELEMENTS_PER_LOAD).find(
 			{
 				success: function(games)
 				{
@@ -63,7 +63,7 @@ function parse(req, res)
 
 		// 3) Find random games (TODO - calculate some random numbers and ask for rows whose index -- a new column -- match those numbers)
 		function(recentGames, callback) {
-			query.limit(Constants.STORIES_PER_PAGE).find(
+			query.limit(Constants.ELEMENTS_PER_LOAD).find(
 			{
 				success: function(games)
 				{
@@ -88,7 +88,7 @@ function parse(req, res)
 		
 		// 4) Render response
 		function(recentGames, otherGames, callback) {
-			res.render('index', { recentGames: recentGames, otherGames: otherGames, currentUser: req.user, STORIES_PER_PAGE: Constants.STORIES_PER_PAGE, totalGameCount: totalGameCount, message: req.flash('message') });
+			res.render('index', { recentGames: recentGames, otherGames: otherGames, currentUser: req.user, ELEMENTS_PER_LOAD: Constants.ELEMENTS_PER_LOAD, totalGameCount: totalGameCount, message: req.flash('message') });
 		}
 	]);
 

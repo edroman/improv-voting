@@ -1,1 +1,1 @@
-exports.STORIES_PER_PAGE = 8;
+exports.ELEMENTS_PER_LOAD = 8;
