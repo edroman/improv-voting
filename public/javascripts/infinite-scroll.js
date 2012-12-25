@@ -3,7 +3,6 @@
 // Requires that:
 //  Elements in the page which are to be infinitely scrolled have the class "infinite"
 //  ELEMENTS_PER_LOAD is the # of elements to load on each ajax call
-//  TOTAL_ELEMENT_COUNT is the total # of elements that could be loaded via ajax
 //  QUERY_TYPE is a custom value that is interpreted by the server-side ajax script
 //  CONTAINER_ELEMENT contains the infinite list
 /////////////////////////////////////////////////////
@@ -32,6 +31,7 @@ function isScrolledIntoView(elem, ignoreAbove)
 
 var pagesRequested = 0;
 var pagesRetrieved = 0;
+var loadedAll = false;
 
 function processInfiniteScroll()
 {
@@ -46,11 +46,8 @@ function processInfiniteScroll()
 	});
 	$('#debug').html(numStoriesHidden + " More Stories...");
 
-	var moreStoriesToRequest = ( (pagesRequested+1) * ELEMENTS_PER_LOAD <= TOTAL_ELEMENT_COUNT);
-	var moreStoriesToRetrieve = ( (pagesRetrieved+1) * ELEMENTS_PER_LOAD <= TOTAL_ELEMENT_COUNT);
-
 	// Perform an AJAX call to load more -- only if we're not waiting for more data from the server from a previous call
-	if (numStoriesHidden <= ELEMENTS_PER_LOAD && pagesRequested == pagesRetrieved)
+	if (!loadedAll && numStoriesHidden <= ELEMENTS_PER_LOAD && pagesRequested == pagesRetrieved)
 	{
 		// Increment the page we're on
 		pagesRequested++;
@@ -61,13 +58,20 @@ function processInfiniteScroll()
 			url: "infinite-content-ajax",
 			data: { page_num : pagesRequested, query_type : QUERY_TYPE }
 		}).done( function(msg) {
-			$(CONTAINER_ELEMENT).append(msg);
-			console.log(msg);
-			pagesRetrieved++;
+			if (msg == "done")
+			{
+				loadedAll = true;
+			}
+			else
+			{
+				$(CONTAINER_ELEMENT).append(msg);
+				console.log(msg);
+				pagesRetrieved++;
 
-			// Re-hide the "loading" and "no more" elements which the user sees if they're at the bottom
-			$('#loading').hide();
-			$('#no-more').hide();
+				// Re-hide the "loading" and "no more" elements which the user sees if they're at the bottom
+				$('#loading').hide();
+				$('#no-more').hide();
+			}
 		});
 	}
 
@@ -86,24 +90,17 @@ function processInfiniteScroll()
 	// If we're near the bottom of the screen..
 	if (nearBottom)
 	{
-		// If there's more content to load...
-		if (moreStoriesToRequest)
-		{
-			// Show the "loading" element
-			$('#loading').css("top","400");
-			$('#loading').show();
-		}
-		else if (moreStoriesToRetrieve)
-		{
-			// Show the "loading" element
-			$('#loading').css("top","400");
-			$('#loading').show();
-		}
-		// Otherwise we're on the final page, so display "no more stories"
-		else
+		// If we're on the final page, show "no more stories"
+		if (loadedAll)
 		{
 			$('#no-more').css("top","400");
 			$('#no-more').show();
+		}
+		// If there's more content to load, show "loading"
+		else
+		{
+			$('#loading').css("top","400");
+			$('#loading').show();
 		}
 	}
 }

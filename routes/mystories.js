@@ -20,5 +20,5 @@ exports.show = function(req, res)
 	};
 
 	// Find games I created
-	Game.findMyGames(renderFunction);
+	Game.findMyGames(0, renderFunction);
 };

@@ -10,7 +10,8 @@ exports.show = function (req, res)
 	Logger.log("Finding " + req.query.query_type + " games.  req.user:", req.user, "page_num:", req.query.page_num, "skipElementCount:", skipElementCount, "queryType:", req.query.query_type);
 
 	var renderFunc = function(games) {
-		res.render('infinite-content-partial', { games: games, currentUser: req.user, message: req.flash('message') });
+		if (games.length == 0) res.send("done");
+		else res.render('infinite-content-partial', { games: games, currentUser: req.user, message: req.flash('message') });
 	};
 
 	switch (req.query.query_type)
@@ -22,7 +23,7 @@ exports.show = function (req, res)
 			Game.findRandomGames(skipElementCount, renderFunc);
 			break;
 		case "mystories":
-			Game.findMyGames(renderFunc);
+			Game.findMyGames(skipElementCount, renderFunc);
 			break;
 		case "leaderboard":
 			Game.findTopVotedGames(renderFunc);

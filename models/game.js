@@ -59,30 +59,33 @@ exports.Game.find = find;
 
 exports.Game.findTopVotedGames = function(callback)
 {
-	find(new Parse.Query(Game).include(["creator", "invitee"]).descending("votes"), function(games) { callback(null, games); } );
+	find(
+		new Parse.Query(Game).include(["creator", "invitee"]).descending("votes").limit(Constants.LEADERBOARD_SIZE),
+		function(games) { callback(null, games); }
+	);
 };
 
-exports.Game.findMyGames = function(returnCallback)
+exports.Game.findMyGames = function(skipElementCount, returnCallback)
 {
 	async.waterfall([
 			function(callback)
 			{
 				find(
-					new Parse.Query(Game).include(["creator", "invitee"]).equalTo("creator", Parse.User.current()),
+					new Parse.Query(Game).include(["creator", "invitee"]).equalTo("creator", Parse.User.current()).skip(skipElementCount).limit(Constants.ELEMENTS_PER_LOAD),
 					function(games) { callback(null, games); }
 				);
 			},
 			function(createdGames, callback)
 			{
 				find(
-					new Parse.Query(Game).include(["creator", "invitee"]).equalTo("invitee", Parse.User.current()),
+					new Parse.Query(Game).include(["creator", "invitee"]).equalTo("invitee", Parse.User.current()).skip(skipElementCount).limit(Constants.ELEMENTS_PER_LOAD),
 					function(games) { callback(null, createdGames, games); }
 				);
 			},
 			function(createdGames, invitedGames, callback)
 			{
 				var games = createdGames.concat(invitedGames);
-				Logger.log(games.length + " stories found for user:", + Parse.User.current());
+				Logger.log(games.length + " stories found for user:", Parse.User.current());
 				returnCallback(games);
 			}
 	]);
@@ -111,6 +114,6 @@ var Games = Parse.Collection.extend(
 	model: Game,
 	query: (new Parse.Query(Game).include(["creator", "invitee"]))
 });
- 
+
 exports.Games = Games;
 
