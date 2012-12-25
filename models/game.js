@@ -43,7 +43,7 @@ var find = function(query, callback)
 				function(games)
 				{
 					// For each game...
-					var callNext = _.after(games.length, function() { callback(null, games) } );
+					var callNext = _.after(games.length, function() { callback(games) } );
 					_.each(games, function(game)
 					{
 						// Deep load it
@@ -59,24 +59,50 @@ exports.Game.find = find;
 
 exports.Game.findTopVotedGames = function(callback)
 {
-	find(new Parse.Query(Game).include(["creator", "invitee"]).descending("votes"), callback);
+	find(new Parse.Query(Game).include(["creator", "invitee"]).descending("votes"), function(games) { callback(null, games); } );
 };
 
-exports.Game.findMyGames = function(callback)
+exports.Game.findMyGames = function(returnCallback)
 {
-	find(new Parse.Query(Game).include(["creator", "invitee"]).equalTo("creator", Parse.User.current()), callback);
-	// TODO also: new Parse.Query(Game).include(["creator", "invitee"]).equalTo("invitee", Parse.User.current())
+	async.waterfall([
+			function(callback)
+			{
+				find(
+					new Parse.Query(Game).include(["creator", "invitee"]).equalTo("creator", Parse.User.current()),
+					function(games) { callback(null, games); }
+				);
+			},
+			function(createdGames, callback)
+			{
+				find(
+					new Parse.Query(Game).include(["creator", "invitee"]).equalTo("invitee", Parse.User.current()),
+					function(games) { callback(null, createdGames, games); }
+				);
+			},
+			function(createdGames, invitedGames, callback)
+			{
+				var games = createdGames.concat(invitedGames);
+				Logger.log(games.length + " stories found for user:", + Parse.User.current());
+				returnCallback(games);
+			}
+	]);
 };
 
 exports.Game.findRecentGames = function(skipElementCount, callback)
 {
-	find(new Parse.Query(Game).include(["creator", "invitee"]).skip(skipElementCount).limit(Constants.ELEMENTS_PER_LOAD), callback);
+	find(
+		new Parse.Query(Game).include(["creator", "invitee"]).skip(skipElementCount).limit(Constants.ELEMENTS_PER_LOAD),
+		function(games) { callback(games); }
+	);
 };
 
 exports.Game.findRandomGames = function(skipElementCount, callback)
 {
 	// TODO: Make this actually random.  Calculate some random numbers and ask for rows whose index -- a new column -- match those numbers.
-	find(new Parse.Query(Game).include(["creator", "invitee"]).skip(skipElementCount).limit(Constants.ELEMENTS_PER_LOAD), callback);
+	find(
+		new Parse.Query(Game).include(["creator", "invitee"]).skip(skipElementCount).limit(Constants.ELEMENTS_PER_LOAD),
+		function(games) { callback(games); }
+	);
 };
 
 var Games = Parse.Collection.extend(

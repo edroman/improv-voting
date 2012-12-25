@@ -1,19 +1,36 @@
+// The user's stories
+
 extends layout
 
 block content
-	br
-	b
-		u Stories I've Created
-	- games.forEach( function(game) {
+
+	// Setup some div elements for infinite scrolling
+	#debug More Stories...
+	#loading Loading Stories...
+	#no-more No More Stories
+
+	mystories
 		br
-		br
-		a(href='/stories/#{game.id}') 
-			By #{game.get("creator").get("name")} and #{game.get("invitee").get("name")}
-		br
-		- game.turns.each( function(turn) {
-		= turn.get("turn");
+		b
+			u Stories I've Created
+		- games.forEach( function(game) {
+			br
+			br
+			a(href='/stories/#{game.id}')
+				By #{game.get("creator").get("name")} and #{game.get("invitee").get("name")}
+			br
+			- game.turns.each( function(turn) {
+			= turn.get("turn");
+			- });
+			p #{game.get("votes")} votes
+			p Share this story to get more votes!
+			p
 		- });
-		p #{game.get("votes")} votes
-		p Share this story to get more votes!
-		p
-	- });
+
+	script(type="text/javascript")
+		var ELEMENTS_PER_LOAD = !{ELEMENTS_PER_LOAD};
+		var TOTAL_ELEMENT_COUNT = !{totalGameCount};
+	script(type="text/javascript")
+		var CONTAINER_ELEMENT = "mystories";
+		var QUERY_TYPE = "mystories";
+	script(type="text/javascript",src="/javascripts/infinite-scroll.js")
