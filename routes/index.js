@@ -11,94 +11,16 @@ var _ = require('underscore')._;
 var Constants = require('../constants.js');
 var Logger = require('../logger.js')
 
-function parse(req, res)
+exports.index = function (req, res)
 {
 	Logger.log("Current user:", Parse.User.current(), "req.user:", req.user);
 
-	// Count total # of games - used for pagination for infinite scroll to see how much content is left to load
-	var totalGameCount;
+	// TODO: Make this work
+	var otherGames = null;
 
-	var query = new Parse.Query(Game).include(["creator", "invitee"]);
+	var renderFunction = function(games) {
+		res.render('index', { recentGames: games, otherGames: otherGames, currentUser: req.user, ELEMENTS_PER_LOAD: Constants.ELEMENTS_PER_LOAD, message: req.flash('message') });
+	};
 
-	async.waterfall([
-		// 1) Count all games.  TODO: Move to parallel
-		function(callback) {
-			query.count(
-			{
-				success: function(count)
-				{
-					Logger.log("There are " + count + " total games found.");
-					
-					totalGameCount = count;
-
-					callback(null);
-				},
-				error: function(error) {  Logger.log(error); }
-			});
-		},
-
-		// 2) Find recent games
-		function(callback) {
-			query.limit(Constants.ELEMENTS_PER_LOAD).find(
-			{
-				success: function(games)
-				{
-					Logger.log("Loading " + games.length + " games.");
-
-					// Setup a callback
-					var callNext = _.after(games.length, function() { callback(null, games) } );
-
-					// For each game...
-					_.each(games, function(game)
-					{
-						// Deep load it
-						game.load({
-							// On the final async load, invoke the callback
-							success: callNext
-						});
-					});
-				},
-				error: function(error) {  Logger.log(error); }
-			});
-		},
-
-		// 3) Find random games (TODO - calculate some random numbers and ask for rows whose index -- a new column -- match those numbers)
-		function(recentGames, callback) {
-			query.limit(Constants.ELEMENTS_PER_LOAD).find(
-			{
-				success: function(games)
-				{
-					Logger.log("Loading " + games.length + " games.");
-
-					// Setup a callback
-					var callNext = _.after(games.length, function() { callback(null, recentGames, games) } );
-
-					// For each game...
-					_.each(games, function(game)
-					{
-						// Deep load it
-						game.load({
-							// On the final async load, invoke the callback
-							success: callNext
-						});
-					});
-				},
-				error: function(error) {  Logger.log(error); }
-			});
-		},
-		
-		// 4) Render response
-		function(recentGames, otherGames, callback) {
-			res.render('index', { recentGames: recentGames, otherGames: otherGames, currentUser: req.user, ELEMENTS_PER_LOAD: Constants.ELEMENTS_PER_LOAD, totalGameCount: totalGameCount, message: req.flash('message') });
-		}
-	]);
-
-}
-
-/*
- * GET home page.
- */
-
-exports.index = function(req, res){
-	parse(req,res);
+	Game.findRecentGames(0, renderFunction);
 };

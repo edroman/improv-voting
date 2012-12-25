@@ -14,7 +14,7 @@ block content
 			u Most Recent Stories
 
 		// Populate content with initial dataset loaded from controller.
-		- recentGames.forEach( function(game) {
+		- if (recentGames) recentGames.forEach( function(game) {
 			// Make a new div element container - necessary since later we retrieve more data from server if there aren't enough div's off-screen
 			.story.infinite
 				br
@@ -45,7 +45,7 @@ block content
 			u Other Interesting Stories
 
 		// Populate content with initial dataset loaded from controller.
-		- otherGames.forEach( function(game) {
+		- if (otherGames) otherGames.forEach( function(game) {
 			// Make a new div element container - necessary since later we retrieve more data from server if there aren't enough div's off-screen
 			.story.infinite
 				br
@@ -74,14 +74,12 @@ block content
 	// This enables infinite scroll for this page
 	script(type="text/javascript")
 		var ELEMENTS_PER_LOAD = !{ELEMENTS_PER_LOAD};
-		var TOTAL_ELEMENT_COUNT = !{totalGameCount};
-
-	script(type="text/javascript")
 		var CONTAINER_ELEMENT = "leftCol";
 		var QUERY_TYPE = "recent";
 	script(type="text/javascript",src="/javascripts/infinite-scroll.js")
 
 	// script(type="text/javascript")
+		var ELEMENTS_PER_LOAD = !{ELEMENTS_PER_LOAD};
 		var CONTAINER_ELEMENT = "rightCol";
 		var QUERY_TYPE = "random";
 		script(type="text/javascript",src="/javascripts/infinite-scroll.js")
