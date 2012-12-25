@@ -4,6 +4,7 @@ var async = require('async');				// Allows waterfall cascade of async ops
 var Parse = require('parse').Parse;
 //Parse.initialize("oqMegxam44o7Bnqw0osiRGEkheO9aMHm7mEGrKhb", "TzhNqjKrx2TOpvVqNEh3ppBJmcqMUkBq9AMvBjxi");
 Parse.initialize("WTbIj7pY3jJC3cnqxF2cidV164TOWxgTtbGfjGnF", "l4EnB0wSnIIHUIjjcTiBqsJxHT9zdDVhoTIYSowX");
+var _ = require('underscore')._;
 var Logger = require('../logger.js');
 
 var Game = Parse.Object.extend("Game",
@@ -31,6 +32,26 @@ Game.prototype.load = function(callback)
 		error: function(collection, error) { Logger.log(error); }
 	});
 };
+Game.prototype.find = function(query, callback)
+{
+	query.find(
+		{
+			success:
+				function(games)
+				{
+					// For each game...
+					var callNext = _.after(games.length, function() { callback(null, games) } );
+					_.each(games, function(game)
+					{
+						// Deep load it
+						game.load( { success: callNext } );
+					});
+				},
+			error:
+				function(error) {  Logger.log(error); }
+		}
+	);
+};
 
 var Games = Parse.Collection.extend(
 {
@@ -41,3 +62,4 @@ var Games = Parse.Collection.extend(
  
 exports.Game = Game;
 exports.Games = Games;
+

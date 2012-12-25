@@ -42,20 +42,9 @@ exports.show = function (req, res)
 					break;
 			}
 
-			query.find(
-			{
-				success: function(games)
-				{
-					// For each game...
-					var callNext = _.after(games.length, function() { callback(null, games) } );
-					_.each(games, function(game)
-					{
-						// Deep load it
-						game.load( { success: callNext } );
-					});
-				},
-				error: function(error) {  Logger.log(error); }
-			});
+			// Call model
+			var game = new Game();
+			game.find(query, callback);
 		},
 
 		// 2) Find second column (TODO - calculate some random numbers and ask for rows whose index -- a new column -- match those numbers)
