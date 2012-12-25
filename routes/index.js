@@ -13,11 +13,8 @@ var Logger = require('../logger.js')
 
 exports.index = function (req, res)
 {
-	// TODO: Make this work
-	var otherGames = null;
-
 	var renderFunction = function(games) {
-		res.render('index', { recentGames: games, otherGames: otherGames, currentUser: req.user, ELEMENTS_PER_LOAD: Constants.ELEMENTS_PER_LOAD, message: req.flash('message') });
+		res.render('index', { recentGames: games, currentUser: req.user, ELEMENTS_PER_LOAD: Constants.ELEMENTS_PER_LOAD, message: req.flash('message') });
 	};
 
 	Game.findRecentGames(0, renderFunction);

@@ -19,9 +19,6 @@ exports.show = function (req, res)
 		case "recent":
 			Game.findRecentGames(skipElementCount, renderFunc);
 			break;
-		case "random":
-			Game.findRandomGames(skipElementCount, renderFunc);
-			break;
 		case "mystories":
 			Game.findMyGames(skipElementCount, renderFunc);
 			break;

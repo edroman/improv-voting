@@ -99,15 +99,6 @@ exports.Game.findRecentGames = function(skipElementCount, callback)
 	);
 };
 
-exports.Game.findRandomGames = function(skipElementCount, callback)
-{
-	// TODO: Make this actually random.  Calculate some random numbers and ask for rows whose index -- a new column -- match those numbers.
-	find(
-		new Parse.Query(Game).include(["creator", "invitee"]).skip(skipElementCount).limit(Constants.ELEMENTS_PER_LOAD),
-		function(games) { callback(games); }
-	);
-};
-
 var Games = Parse.Collection.extend(
 {
 	className: "Games",
