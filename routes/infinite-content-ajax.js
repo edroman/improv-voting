@@ -26,7 +26,7 @@ exports.show = function (req, res)
 			Game.findMyGames(skipElementCount, renderFunc);
 			break;
 		case "leaderboard":
-			Game.findTopVotedGames(renderFunc);
+			Game.findTopVotedGames(skipElementCount, renderFunc);
 			break;
 		default:
 			Logger.log("Bad Query Type: " + req.query.query_type);

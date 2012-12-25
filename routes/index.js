@@ -13,8 +13,6 @@ var Logger = require('../logger.js')
 
 exports.index = function (req, res)
 {
-	Logger.log("Current user:", Parse.User.current(), "req.user:", req.user);
-
 	// TODO: Make this work
 	var otherGames = null;
 

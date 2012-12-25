@@ -1,19 +1,32 @@
 extends layout
 
 block content
-	br
-	b
-		u Highest Voted Stories
-	- games.forEach( function(game) {
+
+	// Setup some div elements for infinite scrolling
+	#debug More Stories...
+	#loading Loading Stories...
+	#no-more No More Stories
+
+	leaderboard
 		br
-		br
-		b By #{game.get("creator").get("name")} and #{game.get("invitee").get("name")}
-		br
-		- game.turns.each( function(turn) {
-		= turn.get("turn");
+		b
+			u Highest Voted Stories
+		- games.forEach( function(game) {
+			br
+			br
+			b By #{game.get("creator").get("name")} and #{game.get("invitee").get("name")}
+			br
+			- game.turns.each( function(turn) {
+			= turn.get("turn");
+			- });
+			p #{game.get("votes")} votes
+			p
+			a(href='/vote/#{game.id}') Vote on this story!
+			p
 		- });
-		p #{game.get("votes")} votes
-		p
-		a(href='/vote/#{game.id}') Vote on this story!
-		p
-	- });
+
+	script(type="text/javascript")
+		var ELEMENTS_PER_LOAD = !{ELEMENTS_PER_LOAD};
+		var CONTAINER_ELEMENT = "leaderboard";
+		var QUERY_TYPE = "leaderboard";
+	script(type="text/javascript",src="/javascripts/infinite-scroll.js")

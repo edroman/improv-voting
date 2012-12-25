@@ -1,1 +1,2 @@
 exports.ELEMENTS_PER_LOAD = 8;
+exports.LEADERBOARD_SIZE = 10;

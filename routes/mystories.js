@@ -13,8 +13,6 @@ exports.show = function(req, res)
 		return;
 	}
 
-	Logger.log("Current user:", Parse.User.current(), "req.user:", req.user);
-
 	var renderFunction = function(games) {
 		res.render('mystories', { games: games, currentUser: Parse.User.current(), ELEMENTS_PER_LOAD: Constants.ELEMENTS_PER_LOAD, message: req.flash('message') });
 	};

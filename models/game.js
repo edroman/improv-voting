@@ -57,11 +57,11 @@ var find = function(query, callback)
 };
 exports.Game.find = find;
 
-exports.Game.findTopVotedGames = function(callback)
+exports.Game.findTopVotedGames = function(skipElementCount, callback)
 {
 	find(
-		new Parse.Query(Game).include(["creator", "invitee"]).descending("votes").limit(Constants.LEADERBOARD_SIZE),
-		function(games) { callback(null, games); }
+		new Parse.Query(Game).include(["creator", "invitee"]).descending("votes").skip(skipElementCount).limit(Constants.LEADERBOARD_SIZE),
+		function(games) { callback(games); }
 	);
 };
 
