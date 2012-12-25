@@ -8,7 +8,7 @@ var express = require('express')
   , user = require('./routes/user')
   , vote = require('./routes/vote')
   , story = require('./routes/story')
-  , storiesajax = require('./routes/stories-ajax')
+  , contentajax = require('./routes/infinite-content-ajax')
   , mystories = require('./routes/mystories')
   , leaderboard = require('./routes/leaderboard')
   , seeds = require('./routes/seeds')
@@ -177,7 +177,7 @@ app.get('/', routes.index);
 app.get('/users', user.list);
 app.get('/rules', function(req,res) { res.render('rules', { currentUser: req.user }); });
 app.get('/mystories', mystories.show);
-app.get('/stories-ajax', storiesajax.show);
+app.get('/infinite-content-ajax', contentajax.show);
 app.get('/seeds', seeds.populate);
 app.get('/leaderboard', leaderboard.show);
 app.get('/vote/:id', ensureAuthenticated, vote.create);

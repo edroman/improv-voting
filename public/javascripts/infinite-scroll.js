@@ -1,6 +1,10 @@
 /////////////////////////////////////////////////////
-// Infinite Scroll code
-// Requires that elements in the page which are to be infinitely scrolled have the class "infinite"
+// Infinite Scroll code (client-side JavaScript)
+// Requires that:
+//  Elements in the page which are to be infinitely scrolled have the class "infinite"
+//  ELEMENTS_PER_LOAD is the # of elements to load on each ajax call
+//  TOTAL_ELEMENT_COUNT is the total # of elements that could be loaded via ajax
+//  QUERY_TYPE is a custom value that is interpreted by the server-side ajax script
 /////////////////////////////////////////////////////
 
 // Checks to see if a DOM element exists
@@ -53,8 +57,8 @@ function processInfiniteScroll()
 		// Do an AJAX call to retrieve more content
 		$.ajax({
 			type: "GET",
-			url: "stories-ajax",
-			data: { page_num : pagesRequested }
+			url: "infinite-content-ajax",
+			data: { page_num : pagesRequested, query_type : QUERY_TYPE }
 		}).done( function(msg) {
 			$("leftCol").append(msg);
 			console.log(msg);

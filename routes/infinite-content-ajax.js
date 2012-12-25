@@ -16,13 +16,19 @@ exports.show = function (req, res)
 {
 	var skipElementCount = req.query.page_num * Constants.ELEMENTS_PER_LOAD;
 	
-	console.log("Rendering partial for Current user: " + Parse.User.current() + " req.user: " + req.user + " page_num: " + req.query.page_num + " skipElementCount: " + skipElementCount);
+	console.log("Rendering partial for Current user: " + Parse.User.current() + " req.user: " + req.user + " page_num: " + req.query.page_num + " skipElementCount: " + skipElementCount + " queryType: " + req.query.query_type);
 	
 	async.waterfall([
 		// 1) Find recent games
 		function(callback) {
-		
-			new Parse.Query(Game).include(["creator", "invitee"]).skip(skipElementCount).limit(Constants.ELEMENTS_PER_LOAD).find(
+
+			var query;
+
+			if (req.query.query_type == "home") {
+				query = new Parse.Query(Game).include(["creator", "invitee"]).skip(skipElementCount).limit(Constants.ELEMENTS_PER_LOAD);
+			}
+
+			query.find(
 			{
 				success: function(games)
 				{
@@ -58,7 +64,7 @@ exports.show = function (req, res)
 		
 		// 3) Render response
 		function(recentGames, otherGames, callback) {
-			res.render('story-partial', { recentGames: recentGames, otherGames: otherGames, currentUser: req.user, message: req.flash('message') });
+			res.render('infinite-content-partial', { recentGames: recentGames, otherGames: otherGames, currentUser: req.user, message: req.flash('message') });
 		}
 	]);
 
