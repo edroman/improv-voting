@@ -5,6 +5,7 @@
 //  ELEMENTS_PER_LOAD is the # of elements to load on each ajax call
 //  TOTAL_ELEMENT_COUNT is the total # of elements that could be loaded via ajax
 //  QUERY_TYPE is a custom value that is interpreted by the server-side ajax script
+//  CONTAINER_ELEMENT contains the infinite list
 /////////////////////////////////////////////////////
 
 // Checks to see if a DOM element exists
@@ -60,7 +61,7 @@ function processInfiniteScroll()
 			url: "infinite-content-ajax",
 			data: { page_num : pagesRequested, query_type : QUERY_TYPE }
 		}).done( function(msg) {
-			$("leftCol").append(msg);
+			$(CONTAINER_ELEMENT).append(msg);
 			console.log(msg);
 			pagesRetrieved++;
 

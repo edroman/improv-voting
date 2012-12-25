@@ -6,6 +6,7 @@ var Parse = require('parse').Parse;
 Parse.initialize("WTbIj7pY3jJC3cnqxF2cidV164TOWxgTtbGfjGnF", "l4EnB0wSnIIHUIjjcTiBqsJxHT9zdDVhoTIYSowX");
 var _ = require('underscore')._;
 var Logger = require('../logger.js');
+var Constants = require('../constants.js');
 
 var Game = Parse.Object.extend("Game",
 {
@@ -32,7 +33,9 @@ Game.prototype.load = function(callback)
 		error: function(collection, error) { Logger.log(error); }
 	});
 };
-Game.prototype.find = function(query, callback)
+exports.Game = Game;
+
+var find = function(query, callback)
 {
 	query.find(
 		{
@@ -52,6 +55,29 @@ Game.prototype.find = function(query, callback)
 		}
 	);
 };
+exports.Game.find = find;
+
+exports.Game.findTopVotedGames = function(callback)
+{
+	find(new Parse.Query(Game).include(["creator", "invitee"]).descending("votes"), callback);
+};
+
+exports.Game.findMyGames = function(callback)
+{
+	find(new Parse.Query(Game).include(["creator", "invitee"]).equalTo("creator", Parse.User.current()), callback);
+	// TODO also: new Parse.Query(Game).include(["creator", "invitee"]).equalTo("invitee", Parse.User.current())
+};
+
+exports.Game.findRecentGames = function(skipElementCount, callback)
+{
+	find(new Parse.Query(Game).include(["creator", "invitee"]).skip(skipElementCount).limit(Constants.ELEMENTS_PER_LOAD), callback);
+};
+
+exports.Game.findRandomGames = function(skipElementCount, callback)
+{
+	// TODO: Make this actually random.  Calculate some random numbers and ask for rows whose index -- a new column -- match those numbers.
+	find(new Parse.Query(Game).include(["creator", "invitee"]).skip(skipElementCount).limit(Constants.ELEMENTS_PER_LOAD), callback);
+};
 
 var Games = Parse.Collection.extend(
 {
@@ -60,6 +86,5 @@ var Games = Parse.Collection.extend(
 	query: (new Parse.Query(Game).include(["creator", "invitee"]))
 });
  
-exports.Game = Game;
 exports.Games = Games;
 
