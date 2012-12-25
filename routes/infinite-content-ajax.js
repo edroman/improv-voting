@@ -11,21 +11,35 @@ var Game = require('../models/game').Game;
 var Games = require('../models/game').Games;
 var _ = require('underscore')._;
 var Constants = require('../constants.js');
+var Logger = require('../logger.js');
 
 exports.show = function (req, res)
 {
 	var skipElementCount = req.query.page_num * Constants.ELEMENTS_PER_LOAD;
 	
-	console.log("Rendering partial for Current user: " + Parse.User.current() + " req.user: " + req.user + " page_num: " + req.query.page_num + " skipElementCount: " + skipElementCount + " queryType: " + req.query.query_type);
+	Logger.log("Rendering partial for Current user:", Parse.User.current(), "req.user:", req.user, "page_num:", req.query.page_num, "skipElementCount:", skipElementCount, "queryType:", req.query.query_type);
 	
 	async.waterfall([
-		// 1) Find recent games
+		// 1) Find first column
 		function(callback) {
 
 			var query;
 
-			if (req.query.query_type == "home") {
-				query = new Parse.Query(Game).include(["creator", "invitee"]).skip(skipElementCount).limit(Constants.ELEMENTS_PER_LOAD);
+			switch (req.query.query_type)
+			{
+				case "home":
+					query = new Parse.Query(Game).include(["creator", "invitee"]).skip(skipElementCount).limit(Constants.ELEMENTS_PER_LOAD);
+					break;
+				case "mystories":
+					query = new Parse.Query(Game).include(["creator", "invitee"]).equalTo("creator", Parse.User.current());
+					// TODO also: new Parse.Query(Game).include(["creator", "invitee"]).equalTo("invitee", Parse.User.current())
+					break;
+				case "leaderboard":
+					query = new Parse.Query(Game).include(["creator", "invitee"]).descending("votes");
+					break;
+				default:
+					Logger.log("Bad Query Type: " + req.query.query_type);
+					break;
 			}
 
 			query.find(
@@ -40,11 +54,11 @@ exports.show = function (req, res)
 						game.load( { success: callNext } );
 					});
 				},
-				error: function(error) {  console.log(error); }
+				error: function(error) {  Logger.log(error); }
 			});
 		},
 
-		// 2) Find random games (TODO - calculate some random numbers and ask for rows whose index -- a new column -- match those numbers)
+		// 2) Find second column (TODO - calculate some random numbers and ask for rows whose index -- a new column -- match those numbers)
 		function(recentGames, callback) {
 			new Parse.Query(Game).include(["creator", "invitee"]).skip(skipElementCount).limit(Constants.ELEMENTS_PER_LOAD).find(
 			{
@@ -58,7 +72,7 @@ exports.show = function (req, res)
 						game.load( { success: callNext } );
 					});
 				},
-				error: function(error) {  console.log(error); }
+				error: function(error) {  Logger.log(error); }
 			});
 		},
 		

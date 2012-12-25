@@ -16,7 +16,7 @@ exports.show = function(req, res)
 		return;
 	}
 
-	console.log("mystories.js Current user: " + Parse.User.current().id + " req.user: " + req.user.id);
+	Logger.log("Current user:", Parse.User.current(), "req.user:", req.user);
 
 	async.waterfall([
 		// 1) Find games I created
@@ -33,7 +33,7 @@ exports.show = function(req, res)
 						game.load( { success: callNext } );
 					});
 				},
-				error: function(error) {  console.log(error); }
+				error: function(error) {  Logger.log(error); }
 			});
 		},
 		// 2) Find games I was invited to
@@ -50,14 +50,14 @@ exports.show = function(req, res)
 						game.load( { success: callNext } );
 					});
 				},
-				error: function(error) {  console.log(error); }
+				error: function(error) {  Logger.log(error); }
 			});
 		},
 		// 3) Render response
 		function(createdGames, invitedGames, callback) {
 			// TODO: Merge createdGames and invitedGames
 			var games = createdGames.concat(invitedGames);
-			console.log(games.length + " stories found for user " + Parse.User.current().id);
+			Logger.log(games.length + " stories found for user:", + Parse.User.current());
 			res.render('mystories', { games: games, currentUser: Parse.User.current(), message: req.flash('message') });
 		}
 	]);

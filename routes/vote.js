@@ -2,6 +2,7 @@ var async = require('async');				// Allows waterfall cascade of async ops
 var Parse = require('parse').Parse;
 //Parse.initialize("oqMegxam44o7Bnqw0osiRGEkheO9aMHm7mEGrKhb", "TzhNqjKrx2TOpvVqNEh3ppBJmcqMUkBq9AMvBjxi");
 Parse.initialize("WTbIj7pY3jJC3cnqxF2cidV164TOWxgTtbGfjGnF", "l4EnB0wSnIIHUIjjcTiBqsJxHT9zdDVhoTIYSowX");
+var Logger = require('../logger');
 
 /*
  * vote on a story
@@ -15,7 +16,7 @@ exports.create = function(req, res)
 			var gameQuery = new Parse.Query("Game").include(["creator", "invitee"]);
 			gameQuery.get(req.params.id, {
 			  success: function(game) {
-				console.log("Successfully found a game for voting: " + game);
+				Logger.log("Successfully found a game for voting: " + game);
 
 				// Users can't vote on their own games
 				if (Parse.User.current().get("fbID") == game.get("creator").get("fbID") || Parse.User.current().get("fbID") == game.get("invitee").get("fbID"))
@@ -31,7 +32,7 @@ exports.create = function(req, res)
 			  },
 			  error: function(error) {
 			  	var msg = "Error: " + error.code + " " + error.message;
-				console.log();
+				  Logger.log();
 				req.flash('message', msg);
 				res.redirect('/');
 			  }
@@ -47,7 +48,7 @@ exports.create = function(req, res)
 						{
 							if (results.length > 0)
 							{
-								console.log("Found an existing vote, so user is trying to vote twice");
+								Logger.log("Found an existing vote, so user is trying to vote twice");
 								
 								// Flash message the error
 								req.flash('message', "Sorry, you can only vote once per story!");
@@ -56,7 +57,7 @@ exports.create = function(req, res)
 							}
 							else
 							{
-								console.log("Searched for existing votes but found none.");
+								Logger.log("Searched for existing votes but found none.");
 								callback(null, game);
 							}
 						},
@@ -64,7 +65,6 @@ exports.create = function(req, res)
 						function(collection, error)
 						{
 							var msg = "Error when searching for votes: " + (error == null ? "" : (error.code + " " + error.message));
-							console.log();
 							req.flash('message', msg);
 							res.redirect('/');
 						}
@@ -83,13 +83,13 @@ exports.create = function(req, res)
 				success: function(vote)
 				{
 					var msg = "Successfully created vote for " + game.id;
-					console.log(msg);
+					Logger.log(msg);
 					callback(null, game);
 				},
 				error: function(vote, error)
 				{
 					var msg = "Voting failed for story " + game.id + " Error: " + error.code + " " + error.message;
-					console.log(msg);
+					Logger.log(msg);
 					req.flash('message', msg);
 					res.redirect('/');
 				}
@@ -104,14 +104,14 @@ exports.create = function(req, res)
 				success: function(game)
 				{
 					var msg = "Congrats, you voted!";
-					console.log(msg);
+					Logger.log(msg);
 					req.flash('message', msg);
 					res.redirect('/');
 				},
 				error: function(vote, error)
 				{
 					var msg = "Voting failed, error: " + error.code + " " + error.message;
-					console.log(msg);
+					Logger.log(msg);
 					req.flash('message', msg);
 					res.redirect('/');
 				}

@@ -7,6 +7,7 @@ var Turns = require('../models/turn').Turns;
 var Game = require('../models/game').Game;
 var Games = require('../models/game').Games;
 var _ = require('underscore')._;
+var Logger = require('../logger.js');
 
 exports.show = function(req, res)
 {
@@ -26,7 +27,7 @@ exports.show = function(req, res)
 						game.load( { success: callNext } );
 					});
 				},
-				error: function(error) {  console.log(error); }
+				error: function(error) {  Logger.log(error); }
 			});
 		},
 		function(data, callback) {

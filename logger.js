@@ -28,13 +28,17 @@ exports.log = function() {
 	var columnNumber = callerInfo[5] || null;
  
 	console.log(util.format("%s (%s) line %d: ", moduleName, functionName, lineNumber));
-	
+
+	var result = "";
+
 	for (var i=0; i < arguments.length; ++i) {
-		if (typeof arguments[i] == "string" || (typeof arguments[i] == "object" && arguments[i].constructor === String)) {
-			console.log(arguments[i]);
+		if (arguments[i] == null || typeof arguments[i] == "string" || (typeof arguments[i] == "object" && arguments[i].constructor === String)) {
+			result += arguments[i] + " ";
 		}
 		else {
-			console.log(JSON.stringify(arguments[i], null, 4));
+			result += (JSON.stringify(arguments[i], null, 4)) + " ";
 		}
 	}
+
+	console.log(result);
 };

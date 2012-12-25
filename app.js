@@ -18,6 +18,7 @@ var express = require('express')
   , path = require('path')
   , async = require('async')
   , flash = require('connect-flash')
+  , Logger = require('./logger.js')
   , Parse = require('parse').Parse;
 //Parse.initialize("oqMegxam44o7Bnqw0osiRGEkheO9aMHm7mEGrKhb", "TzhNqjKrx2TOpvVqNEh3ppBJmcqMUkBq9AMvBjxi");
 Parse.initialize("WTbIj7pY3jJC3cnqxF2cidV164TOWxgTtbGfjGnF", "l4EnB0wSnIIHUIjjcTiBqsJxHT9zdDVhoTIYSowX");
@@ -77,7 +78,7 @@ passport.use(
 			{
 				// If Parse returns to us...
 				success: function(results) {
-					console.log("Successfully retrieved " + results.length + " users.");
+					Logger.log("Facebook login successful.  Checking against database... successfully retrieved " + results.length + " users.");
 					
 					// Check how many users were found.  If 0..
 					if (results.length == 0)
@@ -94,13 +95,13 @@ passport.use(
 						 
 						user.signUp(null, {
 							success: function(user) {
-								console.log("New user created successfully: " + profile._raw);
+								Logger.log("New user created successfully: " + profile._raw);
 								
 								// Return the newly created user to be persisted in the session
 								return done(null, user);
 							},
 							error: function(user, error) {
-								console.log("New user creation failed: " + error.code + " " + error.message + " raw data: " + profile._raw);
+								Logger.log("New user creation failed: " + error.code + " " + error.message + " raw data: " + profile._raw);
 								
 								return done(null, null);
 							}
@@ -112,19 +113,19 @@ passport.use(
 						
 						// Need to set password again to log-in, since we don't receive the password when we run the query.
 						user.set("password", "improv");  // TODO
-						console.log("Logging in user id: " + user.id + " user password: " + user.get("password") + " username: " + user.get("username") + " name: " + user.get("name"));
+						Logger.log("Logging in user id: " + user.id + " user password: " + user.get("password") + " username: " + user.get("username") + " name: " + user.get("name"));
 						user.logIn(
 						{
 							success: function(user) {
 								// Login success
-								console.log("Parse login success.");
+								Logger.log("Parse login success.");
 
 								// Return the existing user to be persisted in the session
 								return done(null, user);
 							},
 							error: function(user, error) {
 								// Login failed
-								console.log("Parse login failed, reason: " + error.message);
+								Logger.log("Parse login failed, reason: " + error.message);
 
 								// Return the existing user to be persisted in the session
 								return done(null, user);
@@ -133,7 +134,7 @@ passport.use(
 					}
 				},
 				error: function(error) {
-					console.log("Error: " + error.code + " " + error.message);
+					Logger.log("Error: " + error.code + " " + error.message);
 					
 					// TODO: Does this need to change?
 					return done(null, null);
@@ -265,5 +266,5 @@ function ensureAuthenticated(req, res, next) {
 }
 
 http.createServer(app).listen(app.get('port'), function(){
-  console.log("Express server listening on port " + app.get('port'));
+	Logger.log("Express server listening on port " + app.get('port'));
 });

@@ -7,6 +7,7 @@ var Games = require('../models/game').Games;
 var Turn = require('../models/turn').Turn;
 var Turns = require('../models/turn').Turns;
 var _ = require('underscore')._;
+var Logger = require('../logger');
 
 exports.show = function parse(req, res)
 {
@@ -19,7 +20,7 @@ exports.show = function parse(req, res)
 				// Deep load game, then render view
 				game.load( { success: function() { res.render('story', { game: game, currentUser: req.user, message: req.flash('message') }) } } );
 			},
-			error: function(error) {  console.log(error); }
+			error: function(error) {  Logger.log(error); }
 		}
 	);
 };

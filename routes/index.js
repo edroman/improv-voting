@@ -9,10 +9,11 @@ var Game = require('../models/game').Game;
 var Games = require('../models/game').Games;
 var _ = require('underscore')._;
 var Constants = require('../constants.js');
+var Logger = require('../logger.js')
 
 function parse(req, res)
 {
-	console.log("Current user: " + Parse.User.current() + " req.user: " + req.user);
+	Logger.log("Current user:", Parse.User.current(), "req.user:", req.user);
 
 	// Count total # of games - used for pagination for infinite scroll to see how much content is left to load
 	var totalGameCount;
@@ -26,13 +27,13 @@ function parse(req, res)
 			{
 				success: function(count)
 				{
-					console.log("There are " + count + " total games found.");
+					Logger.log("There are " + count + " total games found.");
 					
 					totalGameCount = count;
 
 					callback(null);
 				},
-				error: function(error) {  console.log(error); }
+				error: function(error) {  Logger.log(error); }
 			});
 		},
 
@@ -42,7 +43,7 @@ function parse(req, res)
 			{
 				success: function(games)
 				{
-					console.log("Loading " + games.length + " games.");
+					Logger.log("Loading " + games.length + " games.");
 
 					// Setup a callback
 					var callNext = _.after(games.length, function() { callback(null, games) } );
@@ -57,7 +58,7 @@ function parse(req, res)
 						});
 					});
 				},
-				error: function(error) {  console.log(error); }
+				error: function(error) {  Logger.log(error); }
 			});
 		},
 
@@ -67,7 +68,7 @@ function parse(req, res)
 			{
 				success: function(games)
 				{
-					console.log("Loading " + games.length + " games.");
+					Logger.log("Loading " + games.length + " games.");
 
 					// Setup a callback
 					var callNext = _.after(games.length, function() { callback(null, recentGames, games) } );
@@ -82,7 +83,7 @@ function parse(req, res)
 						});
 					});
 				},
-				error: function(error) {  console.log(error); }
+				error: function(error) {  Logger.log(error); }
 			});
 		},
 		
