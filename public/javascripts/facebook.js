@@ -59,8 +59,8 @@ var loadSDK = function(doc, script, id, src)
 };
 
 // Twitter SDK loading
-// log("Loading Twitter SDK");
-// loadSDK(document, 'script', 'twitter-wjs', 'https://platform.twitter.com/widgets.js');
+log("Loading Twitter SDK");
+loadSDK(document, 'script', 'twitter-wjs', 'https://platform.twitter.com/widgets.js');
 
 // Facebook SDK loading
 // Note: From the moment you pass parameters like #xfbml=1&appId=X, the FB SDK will auto-init itself, but we want to control that,
