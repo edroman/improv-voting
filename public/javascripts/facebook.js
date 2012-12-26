@@ -84,6 +84,7 @@ function callback(response)
 		if (response.post_id)
 		{
 			log('Post was published.');
+			alert("Post was published.");
 		}
 		else
 		{
@@ -125,7 +126,7 @@ $(document).ready(function ()
 			{
 				method: 'feed',
 				// useful if we want the callback to go to our site, rather than the JavaScript, so we can log an event
-				redirect_uri: MY_IP,
+				// redirect_uri: MY_IP,
 				link: (MY_IP + '/stories/{game.id}'),
 				picture: 'http://fbrell.com/f8.jpg',
 				name: nameParam,
